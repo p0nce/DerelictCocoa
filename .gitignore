@@ -1,3 +1,4 @@
 dub.selections.json
 .dub
 lib
+*.sublime-project

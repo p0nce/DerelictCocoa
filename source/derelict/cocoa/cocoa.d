@@ -40,7 +40,7 @@ import derelict.cocoa.selectors;
 static if(Derelict_OS_Mac)
     enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
 else static if(Derelict_OS_Windows)
-enum libNames = "dummy (for testing)";
+    enum libNames = "dummy (for testing)";
 else
     static assert(0, "Need to implement Cocoa libNames for this operating system.");
 
@@ -86,10 +86,9 @@ shared static this()
 {
     DerelictCocoa = new DerelictCocoaLoader;
 }
-/*
+
 unittest
 {
     static if(Derelict_OS_Mac)   
         DerelictCocoa.load();
 }
-*/
