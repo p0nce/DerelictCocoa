@@ -266,3 +266,172 @@ class NSString : NSObject
         return result;
     }
 }
+
+class NSEnumerator : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSEnumerator alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSEnumerator(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSEnumerator init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    ID nextObject ()
+    {
+        id result = objc_msgSend(this.id_, sel_nextObject);
+        return result ? new ID(result) : null;
+    }
+}
+
+class NSArray : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSArray alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSArray(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSArray init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    NSEnumerator objectEnumerator ()
+    {
+        id result = objc_msgSend(this.id_, sel_objectEnumerator);
+        return result ? new NSEnumerator(result) : null;
+    }
+}
+
+
+class NSProcessInfo : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSProcessInfo alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSProcessInfo(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSProcessInfo init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    static NSProcessInfo processInfo ()
+    {
+        id result = objc_msgSend(class_NSProcessInfo, sel_processInfo);
+        return result ? new NSProcessInfo(result) : null;
+    }
+
+    NSString processName ()
+    {
+        id result = objc_msgSend(this.id_, sel_processName);
+        return result ? new NSString(result) : null;
+    }
+}
+
+class NSNotification : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSNotification alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSNotification(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSNotification init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+}
