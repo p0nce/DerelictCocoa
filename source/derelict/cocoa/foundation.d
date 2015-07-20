@@ -35,6 +35,7 @@ import derelict.util.loader;
 import derelict.util.system;
 
 import derelict.cocoa.runtime;
+import derelict.cocoa.selectors;
 
 class ID
 {
@@ -51,21 +52,48 @@ class ID
     }
 }
 
-import derelict.cocoa.selectors;
-
-
-/*static if(Derelict_OS_Mac)
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-else static if(Derelict_OS_Windows)
-    enum libNames = "dummy (for testing)";
-else
-    static assert(0, "Need to implement Foundation libNames for this operating system.");
-*/
-/*
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
+class NSObject : ID
 {
-    DerelictFoundation = new DerelictFoundationLoader;
-}*/
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSObject alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSObject(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    static void poseAsClass (Class aClass)
+    {
+        objc_msgSend(class_NSObject, sel_poseAsClass, aClass);
+    }
+
+    NSObject init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    void release ()
+    {
+        objc_msgSend(this.id_, sel_release);
+    }
+}
