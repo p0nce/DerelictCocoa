@@ -29,9 +29,15 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+// Initial Version: Darrell Walisser <dwaliss1@purdue.edu>
+// Non-NIB-Code & other changes: Max Horn <max@quendi.de>
+// Port to the D programming language: Jacob Carlborg <jacob.carlborg@gmail.com>
+// Resurrected by: Guillaume Piolat <contact@auburnsounds.com>
+
 module derelict.cocoa;
 
-
+public import derelict.cocoa.runtime;
 public import derelict.cocoa.foundation;
 
 
