@@ -31,6 +31,8 @@
 */
 module derelict.cocoa.runtime;
 
+import std.string;
+
 import derelict.util.loader;
 
 
@@ -168,21 +170,21 @@ extern (C) nothrow @nogc
     alias Class function (Class superclass) pfobjc_registerClassPair;
 
     alias bool function (Class cls, const(char)* name, size_t size, byte alignment, const(char)* types) pfclass_addIvar;
-    alias bool function (Class cls, SEL name, IMP imp, const(char)* types) pfclass_addMethod;
+    alias bool function (Class cls, const(SEL) name, IMP imp, const(char)* types) pfclass_addMethod;
     alias Class function (Class superclass, const(char)* name, size_t extraBytes) pfobjc_allocateClassPair;
-    alias id function (/*const*/char* name) pfobjc_getClass;
-    alias id function (/*const*/char* name) pfobjc_lookUpClass;
+    alias id function (const(char)* name) pfobjc_getClass;
+    alias id function (const(char)* name) pfobjc_lookUpClass;
     alias id function (id theReceiver, SEL theSelector, ...) pfobjc_msgSend;
     alias id function (objc_super* superr, SEL op, ...) pfobjc_msgSendSuper;
     alias void function (void* stretAddr, id theReceiver, SEL theSelector, ...) pfobjc_msgSend_stret;
     alias const(char)* function (id obj) pfobject_getClassName;
-    alias Ivar function (id obj, /*const*/char* name, void** outValue) pfobject_getInstanceVariable;
-    alias Ivar function (id obj, /*const*/char* name, void* value) pfobject_setInstanceVariable;
-    alias SEL function (/*const*/char* str) pfsel_registerName;
+    alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
+    alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
+    alias SEL function (const(char)* str) pfsel_registerName;
     version (X86)
         alias double function (id self, SEL op, ...) pfobjc_msgSend_fpret;
 
-    alias  Method function (Class aClass, SEL aSelector) pfclass_getInstanceMethod;
+    alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
     alias IMP function (Method method, IMP imp) pfmethod_setImplementation;
     alias bool function () pfNSApplicationLoad;
 }
@@ -239,7 +241,7 @@ id objc_lookUpClass (string name)
 
 string object_getClassName (id obj)
 {
-    return fromStringz(varobject_getClassName(obj));
+    return fromStringz(varobject_getClassName(obj)).idup;
 }
 
 Ivar object_getInstanceVariable (id obj, string name, void** outValue)
@@ -254,7 +256,7 @@ Ivar object_setInstanceVariable (id obj, string name, void* value)
 
 string sel_registerName (string str)
 {
-    return fromStringz(varsel_registerName(str.ptr));
+    return fromStringz(varsel_registerName(str.ptr)).idup;
 }
 
 id objc_msgSend (ARGS...)(id theReceiver, string theSelector, ARGS args)
@@ -287,49 +289,4 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
 
 
 
-static if(Derelict_OS_Mac)
-    enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
-else
-    static assert(0, "Need to implement Cocoa libNames for this operating system.");
-
-
-class DerelictObjCRuntimeLoader : SharedLibLoader
-{
-    protected
-    {
-        this()
-        {
-            super(libNames);
-        }
-
-        override void loadSymbols()
-        {
-            bindFunc(cast(void**)&objc_registerClassPair, "objc_registerClassPair");
-            bindFunc(cast(void**)&varclass_addIvar, "class_addIvar");
-            bindFunc(cast(void**)&varclass_addMethod, "class_addMethod");
-            bindFunc(cast(void**)&varobjc_allocateClassPair, "objc_allocateClassPair");
-            bindFunc(cast(void**)&varobjc_getClass, "objc_getClass");
-            bindFunc(cast(void**)&varobjc_lookUpClass, "objc_lookUpClass");
-            bindFunc(cast(void**)&varobjc_msgSend, "objc_msgSend");
-            bindFunc(cast(void**)&varobjc_msgSendSuper, "objc_msgSendSuper");
-            bindFunc(cast(void**)&varobjc_msgSend_stret, "objc_msgSend_stret");
-            bindFunc(cast(void**)&varobject_getClassName, "object_getClassName");
-            bindFunc(cast(void**)&varobject_getInstanceVariable, "object_getInstanceVariable");
-            bindFunc(cast(void**)&varobject_setInstanceVariable, "object_setInstanceVariable");
-            bindFunc(cast(void**)&varsel_registerName, "sel_registerName");
-            version(X86) bindFunc(cast(void**)&varobjc_msgSend_fpret, "objc_msgSend_fpret");
-            bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
-            bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
-            bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
-        }
-    }
-}
-
-
-__gshared DerelictObjCRuntimeLoader DerelictObjCRuntime;
-
-shared static this()
-{
-    DerelictObjCRuntime = new DerelictObjCRuntimeLoader;
-}
 
