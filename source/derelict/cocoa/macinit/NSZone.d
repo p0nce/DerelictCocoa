@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2015 Derelict Developers
+ * Copyright (c) 2004-2008 Derelict Developers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,29 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.NSZone;
 
+version (darwin):
 
-
+import derelict.sdl.macinit.NSGeometry;
 import derelict.util.loader;
-import derelict.util.system;
 
-static if(Derelict_OS_Mac)
+package:
+
+extern (C)
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
+    typedef void* function(NSUInteger bytes) pfNSAllocateMemoryPages;
+    pfNSAllocateMemoryPages NSAllocateMemoryPages;
+
+    typedef void function (void* ptr, NSUInteger bytes) pfNSDeallocateMemoryPages;
+    pfNSDeallocateMemoryPages NSDeallocateMemoryPages;
 }
-else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
 
-
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
+static this ()
 {
-    DerelictFoundation = new DerelictFoundationLoader;
+    // The Foundation framework
+    SharedLib coreFoundation = Derelict_LoadSharedLib("Foundation.framework/Foundation");
+
+    bindFunc(NSAllocateMemoryPages)("NSAllocateMemoryPages", coreFoundation);
+    bindFunc(NSDeallocateMemoryPages)("NSDeallocateMemoryPages", coreFoundation);
 }

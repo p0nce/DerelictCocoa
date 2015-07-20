@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2015 Derelict Developers
+ * Copyright (c) 2004-2008 Derelict Developers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,25 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.ID;
 
+version (darwin):
 
+import derelict.sdl.macinit.runtime;
 
-import derelict.util.loader;
-import derelict.util.system;
+package:
 
-static if(Derelict_OS_Mac)
+class ID
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-}
-else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
+    id id_;
 
+    this ()
+    {
+        id_ = null;
+    }
 
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
-{
-    DerelictFoundation = new DerelictFoundationLoader;
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
 }

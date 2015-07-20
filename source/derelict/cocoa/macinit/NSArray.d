@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2015 Derelict Developers
+ * Copyright (c) 2004-2008 Derelict Developers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,57 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.NSArray;
 
+version (darwin):
 
+import derelict.sdl.macinit.ID;
+import derelict.sdl.macinit.NSEnumerator;
+import derelict.sdl.macinit.NSObject;
+import derelict.sdl.macinit.runtime;
+import derelict.sdl.macinit.selectors;
+import derelict.sdl.macinit.string;
 
-import derelict.util.loader;
-import derelict.util.system;
+package:
 
-static if(Derelict_OS_Mac)
+class NSArray : NSObject
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-}
-else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
+    this ()
+    {
+        id_ = null;
+    }
 
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
 
+    static NSArray alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSArray(result) : null;
+    }
 
-__gshared DerelictFoundationLoader DerelictFoundation;
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
 
-shared static this()
-{
-    DerelictFoundation = new DerelictFoundationLoader;
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    NSArray init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    NSEnumerator objectEnumerator ()
+    {
+        id result = objc_msgSend(this.id_, sel_objectEnumerator);
+        return result ? new NSEnumerator(result) : null;
+    }
 }

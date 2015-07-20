@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2015 Derelict Developers
+ * Copyright (c) 2004-2008 Derelict Developers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,62 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.string;
 
-
-
-import derelict.util.loader;
-import derelict.util.system;
-
-static if(Derelict_OS_Mac)
+version (darwin)
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-}
+
+version (Tango)
+    import tango.text.Util : locatePrior;
+
 else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
-
-
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
 {
-    DerelictFoundation = new DerelictFoundationLoader;
+    import std.string : rfind;
+    import std.utf : toUTF32;
 }
+
+package
+{
+
+    version (Tango)
+    {
+        /**
+         * string alias
+         */
+        alias char[] string;
+    
+        /**
+         * wstring alias
+         */
+        alias wchar[] wstring;
+    
+        /**
+         * dstring alias
+         */
+        alias dchar[] dstring;
+    }
+}
+
+public size_t lastIndexOf (T)(T[] str, T ch)
+{
+    return lastIndexOf(str, ch, str.length);
+}
+
+public size_t lastIndexOf (T)(T[] str, T ch, size_t formIndex)
+{
+    size_t res;
+
+    version (Tango)
+        res = str.locatePrior(ch, formIndex);
+
+    else
+        return  str.rfind(toUTF32([ch])[0]);
+
+    version (Tango)
+        if (res is str.length)
+            res = -1;
+
+    return res;
+}
+
+} // version(darwin)

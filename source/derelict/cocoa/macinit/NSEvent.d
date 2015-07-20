@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004-2015 Derelict Developers
+ * Copyright (c) 2004-2008 Derelict Developers
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,17 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.NSEvent;
 
-
-
-import derelict.util.loader;
-import derelict.util.system;
-
-static if(Derelict_OS_Mac)
+enum
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-}
-else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
-
-
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
-{
-    DerelictFoundation = new DerelictFoundationLoader;
+    NSAlphaShiftKeyMask = 1 << 16,
+    NSShiftKeyMask = 1 << 17,
+    NSControlKeyMask = 1 << 18,
+    NSAlternateKeyMask = 1 << 19,
+    NSCommandKeyMask = 1 << 20,
+    NSNumericPadKeyMask = 1 << 21,
+    NSHelpKeyMask = 1 << 22,
+    NSFunctionKeyMask = 1 << 23,
+    NSDeviceIndependentModifierFlagsMask = 0xffff0000U
 }

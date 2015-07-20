@@ -29,25 +29,50 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-module derelict.cocoa.foundation;
+module derelict.sdl.macinit.NSGeometry;
 
+version (darwin):
 
+package:
 
-import derelict.util.loader;
-import derelict.util.system;
-
-static if(Derelict_OS_Mac)
+static if ((void*).sizeof > int.sizeof) // 64bit
 {
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
+    alias long NSInteger;
+    alias ulong NSUInteger;
 }
+
 else
-    static assert(0, "Need to implement OpenCL libNames for this operating system.");
-
-
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
 {
-    DerelictFoundation = new DerelictFoundationLoader;
+    alias int NSInteger;
+    alias uint NSUInteger;
+}
+
+static if ((void*).sizeof > int.sizeof) // 64bit
+    alias double CGFloat;
+
+else
+    alias float CGFloat;
+
+struct NSPoint
+{
+    public CGFloat x;
+    public CGFloat y;
+}
+
+struct NSRange
+{
+    NSUInteger location;
+    NSUInteger length;
+}
+
+struct NSRect
+{
+    NSPoint origin;
+    NSSize size;
+}
+
+struct NSSize
+{
+    CGFloat width;
+    CGFloat height;
 }
