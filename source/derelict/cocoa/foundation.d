@@ -435,3 +435,86 @@ class NSNotification : NSObject
         return result ? this : null;
     }
 }
+
+class NSDictionary : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSDictionary alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSDictionary(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSDictionary init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    ID objectForKey (ID key)
+    {
+        id result = objc_msgSend(this.id_, sel_objectForKey, key ? key.id_ : null);
+        return result ? new ID(result) : null;
+    }
+}
+
+class NSAutoreleasePool : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSAutoreleasePool alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSAutoreleasePool(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSAutoreleasePool init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    override void release ()
+    {
+        objc_msgSend(this.id_, sel_release);
+    }
+}
