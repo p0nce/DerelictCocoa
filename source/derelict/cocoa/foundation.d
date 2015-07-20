@@ -31,6 +31,8 @@
  */
 module derelict.cocoa.foundation;
 
+import std.string;
+
 import derelict.util.loader;
 import derelict.util.system;
 

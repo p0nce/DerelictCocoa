@@ -86,4 +86,10 @@ shared static this()
 {
     DerelictCocoa = new DerelictCocoaLoader;
 }
-
+/*
+unittest
+{
+    static if(Derelict_OS_Mac)   
+        DerelictCocoa.load();
+}
+*/

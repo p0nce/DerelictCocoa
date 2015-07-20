@@ -174,9 +174,9 @@ extern (C) nothrow @nogc
     alias Class function (Class superclass, const(char)* name, size_t extraBytes) pfobjc_allocateClassPair;
     alias id function (const(char)* name) pfobjc_getClass;
     alias id function (const(char)* name) pfobjc_lookUpClass;
-    alias id function (id theReceiver, SEL theSelector, ...) pfobjc_msgSend;
-    alias id function (objc_super* superr, SEL op, ...) pfobjc_msgSendSuper;
-    alias void function (void* stretAddr, id theReceiver, SEL theSelector, ...) pfobjc_msgSend_stret;
+    alias id function (id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend;
+    alias id function (objc_super* superr, const(SEL) op, ...) pfobjc_msgSendSuper;
+    alias void function (void* stretAddr, id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend_stret;
     alias const(char)* function (id obj) pfobject_getClassName;
     alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
     alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
