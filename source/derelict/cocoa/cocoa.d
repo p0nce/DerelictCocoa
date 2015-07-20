@@ -35,6 +35,7 @@ import derelict.util.system;
 import derelict.util.loader;
 
 import derelict.cocoa.runtime;
+import derelict.cocoa.selectors;
 
 static if(Derelict_OS_Mac)
     enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
@@ -72,6 +73,8 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
+
+            loadSelectors();
         }
     }
 }
