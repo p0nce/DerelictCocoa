@@ -1,0 +1,16 @@
+{
+    "name": "derelict-cocoa",
+    "description": "A dynamic binding to the Apple Cocoa framework.",
+    "homepage": "https://github.com/p0nce/DerelictCocoa",
+    "license": "Boost",
+    "authors": [
+        "Guillaume Piolat",
+    ],
+
+    "targetName": "DerelictCocoa",
+    "targetPath": "lib",
+
+    "dependencies": {
+        "derelict-util": "~>2.0"
+    }
+}
