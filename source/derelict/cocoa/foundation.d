@@ -40,38 +40,6 @@ import derelict.util.system;
 import derelict.cocoa.runtime;
 import derelict.cocoa.selectors;
 
-static if(Derelict_OS_Mac)
-    enum libNames = "../Frameworks/Foundation.framework/Foundation, /Library/Frameworks/Foundation.framework/Foundation, /System/Library/Frameworks/Foundation.framework/Foundation";
-else static if(Derelict_OS_Windows)
-    enum libNames = "dummy (for testing)";
-else
-    static assert(0, "Need to implement Cocoa libNames for this operating system.");
-
-class DerelictFoundationLoader : SharedLibLoader
-{
-    protected
-    {
-        this()
-        {
-            super(libNames);
-        }
-
-        override void loadSymbols()
-        {
-            // these function can be found either here or in Cocoa... which to use?
-            bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
-            bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
-        }
-    }
-}
-
-__gshared DerelictFoundationLoader DerelictFoundation;
-
-shared static this()
-{
-    DerelictFoundation = new DerelictFoundationLoader;
-}
-
 // NSZone
 
 extern (C) nothrow @nogc

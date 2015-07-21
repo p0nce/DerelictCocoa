@@ -1,0 +1,12 @@
+{
+    "targetType": "executable",
+    "name": "window",
+    "sourcePaths": [ "." ],
+    "importPaths": [ "." ],
+    "mainSourceFile": "window.d",
+
+    "dependencies":
+    {
+        "derelict-cocoa": {"path": "../../"}
+    }
+}

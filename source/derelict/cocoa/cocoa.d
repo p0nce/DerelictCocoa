@@ -36,6 +36,7 @@ import derelict.util.loader;
 
 import derelict.cocoa.runtime;
 import derelict.cocoa.selectors;
+import derelict.cocoa.foundation;
 
 static if(Derelict_OS_Mac)
     enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
@@ -56,6 +57,7 @@ class DerelictCocoaLoader : SharedLibLoader
 
         override void loadSymbols()
         {
+            // Runtime
             bindFunc(cast(void**)&objc_registerClassPair, "objc_registerClassPair");
             bindFunc(cast(void**)&varclass_addIvar, "class_addIvar");
             bindFunc(cast(void**)&varclass_addMethod, "class_addMethod");
@@ -73,6 +75,11 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
+
+
+            // Foundation
+            bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
+            bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
 
             loadSelectors();
         }

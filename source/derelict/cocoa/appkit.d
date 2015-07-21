@@ -74,6 +74,84 @@ enum
     NSDeviceIndependentModifierFlagsMask = 0xffff0000U
 }
 
+class NSApplication : NSObject
+{
+    this ()
+    {
+        id_ = null;
+    }
+
+    this (id id_)
+    {
+        this.id_ = id_;
+    }
+
+    static NSApplication alloc ()
+    {
+        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        return result ? new NSApplication(result) : null;
+    }
+
+    static Class class_ ()
+    {
+        string name = this.classinfo.name;
+        size_t index = name.lastIndexOf('.');
+
+        if (index != -1)
+            name = name[index + 1 .. $];
+
+        return cast(Class) objc_getClass(name);
+    }
+
+    override NSApplication init ()
+    {
+        id result = objc_msgSend(this.id_, sel_init);
+        return result ? this : null;
+    }
+
+    public static NSApplication sharedApplication ()
+    {
+        id result = objc_msgSend(class_NSApplication, sel_sharedApplication);
+        return result ? new NSApplication(result) : null;
+    }
+
+    NSMenu mainMenu ()
+    {
+        id result = objc_msgSend(this.id_, sel_mainMenu);
+        return result ? new NSMenu(result) : null;
+    }
+
+    void setAppleMenu (NSMenu menu)
+    {
+        objc_msgSend(this.id_, sel_setAppleMenu, menu ? menu.id_ : null);
+    }
+
+    void setWindowsMenu (NSMenu menu)
+    {
+        objc_msgSend(this.id_, sel_setWindowsMenu, menu ? menu.id_ : null);
+    }
+
+    void setMainMenu (NSMenu menu)
+    {
+        objc_msgSend(this.id_, sel_setMainMenu, menu ? menu.id_ : null);
+    }
+
+    void setDelegate (ID object)
+    {
+        objc_msgSend(this.id_, sel_setDelegate, object ? object.id_ : null);
+    }
+
+    void run ()
+    {
+        objc_msgSend(this.id_, sel_run);
+    }
+
+    void stop (ID sender)
+    {
+        objc_msgSend(this.id_, sel_stop, sender ? sender.id_ : null);
+    }
+}
+
 class NSMenu : NSObject
 {
     this ()
@@ -229,80 +307,3 @@ class NSMenuItem : NSObject
     }
 }
 
-class NSApplication : NSObject
-{
-    this ()
-    {
-        id_ = null;
-    }
-
-    this (id id_)
-    {
-        this.id_ = id_;
-    }
-
-    static NSApplication alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel_alloc);
-        return result ? new NSApplication(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSApplication init ()
-    {
-        id result = objc_msgSend(this.id_, sel_init);
-        return result ? this : null;
-    }
-
-    public static NSApplication sharedApplication ()
-    {
-        id result = objc_msgSend(class_NSApplication, sel_sharedApplication);
-        return result ? new NSApplication(result) : null;
-    }
-
-    NSMenu mainMenu ()
-    {
-        id result = objc_msgSend(this.id_, sel_mainMenu);
-        return result ? new NSMenu(result) : null;
-    }
-
-    void setAppleMenu (NSMenu menu)
-    {
-        objc_msgSend(this.id_, sel_setAppleMenu, menu ? menu.id_ : null);
-    }
-
-    void setWindowsMenu (NSMenu menu)
-    {
-        objc_msgSend(this.id_, sel_setWindowsMenu, menu ? menu.id_ : null);
-    }
-
-    void setMainMenu (NSMenu menu)
-    {
-        objc_msgSend(this.id_, sel_setMainMenu, menu ? menu.id_ : null);
-    }
-
-    void setDelegate (ID object)
-    {
-        objc_msgSend(this.id_, sel_setDelegate, object ? object.id_ : null);
-    }
-
-    void run ()
-    {
-        objc_msgSend(this.id_, sel_run);
-    }
-
-    void stop (ID sender)
-    {
-        objc_msgSend(this.id_, sel_stop, sender ? sender.id_ : null);
-    }
-}
