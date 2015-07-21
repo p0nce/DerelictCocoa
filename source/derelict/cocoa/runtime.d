@@ -231,7 +231,25 @@ Class objc_allocateClassPair (Class superclass, string name, size_t extraBytes)
 
 id objc_getClass (string name)
 {
-    return varobjc_getClass(name.ptr);
+    import std.stdio;
+    id result = varobjc_getClass(toStringz(name));
+
+    if (result is null)
+        throw new Exception("objc_getClass failed with class " ~ name);
+    
+/*
+    debug {
+        import std.stdio;
+        Class isa = result.isa;
+        assert(isa !is null);
+        assert(isa.name !is null);
+
+        writeln("name = ", object_getClassName(result));
+        writeln("info = ", isa.info);
+        writeln("version = ", isa.versionn);
+    }*/
+
+    return result;
 }
 
 id objc_lookUpClass (string name)

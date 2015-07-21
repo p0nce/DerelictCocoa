@@ -148,4 +148,17 @@ void loadSelectors()
     sel_application = sel_registerName("application:openFile:");
     sel_applicationDidFinishLaunching = sel_registerName("applicationDidFinishLaunching:");
     sel_initWithTitle_action_keyEquivalent = sel_registerName("initWithTitle:action:keyEquivalent:");
+
+    // Lazy selector literal
+    // eg: sel!"init"
+    // Not thread-safe
+    string sel(string selectorName)()
+    {
+        __gshared string cached = null;
+
+        if (cached is null)
+        {
+            cached = registerName(selectorName);
+        }       
+    }
 }
