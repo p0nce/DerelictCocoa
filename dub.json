@@ -4,7 +4,10 @@
     "homepage": "https://github.com/p0nce/DerelictCocoa",
     "license": "Boost",
     "authors": [
-        "Guillaume Piolat",
+        "Darell Walisser (initial version)",
+        "Max Horn (Non-NIB-Code & other changes)",
+        "Jacob Carlborg (D port)",
+        "Guillaume Piolat (D2 port)"
     ],
 
     "targetName": "DerelictCocoa",
