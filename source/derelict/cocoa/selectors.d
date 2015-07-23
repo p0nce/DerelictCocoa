@@ -40,7 +40,6 @@ __gshared
     id class_NSAutoreleasePool;
     id class_NSDictionary;
     id class_NSEnumerator;
-    id class_NSGeometry;
     id class_NSMenu;
     id class_NSMenuItem;
     id class_NSNotification;
@@ -99,7 +98,6 @@ void loadSelectors()
     class_NSAutoreleasePool = objc_getClass("NSAutoreleasePool");
     class_NSDictionary = objc_getClass("NSDictionary");
     class_NSEnumerator = objc_getClass("NSEnumerator");
-    class_NSGeometry = objc_getClass("NSGeometry");
     class_NSMenu = objc_getClass("NSMenu");
     class_NSMenuItem = objc_getClass("NSMenuItem");
     class_NSNotification = objc_getClass("NSNotification");
