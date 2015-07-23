@@ -39,8 +39,6 @@ import derelict.cocoa.foundation;
 
 static if(Derelict_OS_Mac)
     enum libNames = "/System/Library/Frameworks/Cocoa.framework/Cocoa";
-else static if(Derelict_OS_Windows)
-    enum libNames = "dummy (for testing)";
 else
     static assert(0, "Need to implement Cocoa libNames for this operating system.");
 

@@ -38,7 +38,6 @@ import derelict.util.loader;
 import derelict.util.system;
 
 import derelict.cocoa.runtime;
-import derelict.cocoa.selectors;
 
 // NSZone
 
@@ -61,31 +60,24 @@ unittest
 }
 
 
-class ID
+id toID(NSObject object)
 {
-    id id_;
-
-    this()
-    {
-        id_ = null;
-    }
-
-    this(id id_)
-    {
-        this.id_ = id_;
-    }
+    if (object is null)
+        return null;
+    else
+        return object._id;
 }
 
-class NSObject : ID
+class NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
+    id _id = null;    
+
+    alias _id this;
 
     this (id id_)
     {
-        this.id_ = id_;
+        assert(id_ !is null); // use null instead of NSObject containing null
+        this._id = id_;
     }
 
     static NSObject alloc ()
@@ -112,25 +104,20 @@ class NSObject : ID
 
     NSObject init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
     void release ()
     {
-        objc_msgSend(this.id_, sel!"release");
+        objc_msgSend(_id, sel!"release");
     }
 }
 class NSString : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSString alloc ()
@@ -152,7 +139,7 @@ class NSString : NSObject
 
     override NSString init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
@@ -169,33 +156,33 @@ class NSString : NSObject
 
     NSUInteger length ()
     {
-        return cast(NSUInteger) objc_msgSend(this.id_, sel!"length");
+        return cast(NSUInteger) objc_msgSend(_id, sel!"length");
     }
 
     /*const*/ char* UTF8String ()
     {
-        return cast(/*const*/ char*) objc_msgSend(this.id_, sel!"UTF8String");
+        return cast(/*const*/ char*) objc_msgSend(_id, sel!"UTF8String");
     }
 
     void getCharacters (wchar* buffer, NSRange range)
     {
-        objc_msgSend(this.id_, sel!"getCharacters:range:", buffer, range);
+        objc_msgSend(_id, sel!"getCharacters:range:", buffer, range);
     }
 
     NSString stringWithCharacters (/*const*/ wchar* chars, NSUInteger length)
     {
-        id result = objc_msgSend(this.id_, sel!"stringWithCharacters:length:", chars, length);
+        id result = objc_msgSend(_id, sel!"stringWithCharacters:length:", chars, length);
         return result ? new NSString(result) : null;
     }
 
     NSRange rangeOfString (NSString aString)
     {
-        return *cast(NSRange*) objc_msgSend(this.id_, sel!"rangeOfString", aString ? aString.id_ : null);
+        return *cast(NSRange*) objc_msgSend(_id, sel!"rangeOfString", aString.toID);
     }
 
     NSString stringByAppendingString (NSString aString)
     {
-        id result = objc_msgSend(this.id_, sel!"stringByAppendingString:", aString ? aString.id_ : null);
+        id result = objc_msgSend(_id, sel!"stringByAppendingString:", aString.toID);
         return result ? new NSString(result) : null;
     }
 
@@ -237,14 +224,9 @@ class NSString : NSObject
 
 class NSEnumerator : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSEnumerator alloc ()
@@ -266,27 +248,21 @@ class NSEnumerator : NSObject
 
     override NSEnumerator init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
-    ID nextObject ()
+    id nextObject ()
     {
-        id result = objc_msgSend(this.id_, sel!"nextObject");
-        return result ? new ID(result) : null;
+        return objc_msgSend(_id, sel!"nextObject");
     }
 }
 
 class NSArray : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSArray alloc ()
@@ -308,13 +284,13 @@ class NSArray : NSObject
 
     override NSArray init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
     NSEnumerator objectEnumerator ()
     {
-        id result = objc_msgSend(this.id_, sel!"objectEnumerator");
+        id result = objc_msgSend(_id, sel!"objectEnumerator");
         return result ? new NSEnumerator(result) : null;
     }
 }
@@ -322,14 +298,9 @@ class NSArray : NSObject
 
 class NSProcessInfo : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSProcessInfo alloc ()
@@ -351,7 +322,7 @@ class NSProcessInfo : NSObject
 
     override NSProcessInfo init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
@@ -363,21 +334,16 @@ class NSProcessInfo : NSObject
 
     NSString processName ()
     {
-        id result = objc_msgSend(this.id_, sel!"processName");
+        id result = objc_msgSend(_id, sel!"processName");
         return result ? new NSString(result) : null;
     }
 }
 
 class NSNotification : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSNotification alloc ()
@@ -399,21 +365,16 @@ class NSNotification : NSObject
 
     override NSNotification init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 }
 
 class NSDictionary : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSDictionary alloc ()
@@ -435,27 +396,22 @@ class NSDictionary : NSObject
 
     override NSDictionary init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
-    ID objectForKey (ID key)
+    id objectForKey(id key)
     {
-        id result = objc_msgSend(this.id_, sel!"objectForKey:", key ? key.id_ : null);
-        return result ? new ID(result) : null;
+        id result = objc_msgSend(_id, sel!"objectForKey:", key);
+        return result;
     }
 }
 
 class NSAutoreleasePool : NSObject
 {
-    this ()
-    {
-        id_ = null;
-    }
-
     this (id id_)
     {
-        this.id_ = id_;
+        super(id_);
     }
 
     static NSAutoreleasePool alloc ()
@@ -477,12 +433,12 @@ class NSAutoreleasePool : NSObject
 
     override NSAutoreleasePool init ()
     {
-        id result = objc_msgSend(this.id_, sel!"init");
+        id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
     override void release ()
     {
-        objc_msgSend(this.id_, sel!"release");
+        objc_msgSend(_id, sel!"release");
     }
 }
