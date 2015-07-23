@@ -80,6 +80,13 @@ alias Class = objc_class*;
 alias id = objc_object*;
 
 
+alias BOOL = char;
+enum : BOOL
+{
+    NO = 0,
+    YES = 1
+}
+
 // Below is internal use only
 package:
 

@@ -122,7 +122,7 @@ class NSApplication : NSObject
         objc_msgSend(_id, sel!"setActivationPolicy:", policy);
     }
 
-    void activateIgnoringOtherApps(bool b)
+    void activateIgnoringOtherApps(BOOL b)
     {
         objc_msgSend(_id, sel!"activateIgnoringOtherApps:", b);
     }
@@ -231,10 +231,32 @@ class NSMenuItem : NSObject
     }
 }
 
+// NSResponder
+
 class NSResponder : NSObject
 {
     mixin NSObjectTemplate!(NSResponder, "NSResponder");
 }
+
+
+// NSView
+
+alias NSBorderType = NSUInteger;
+enum : NSBorderType
+{
+   NSNoBorder     = 0,
+   NSLineBorder   = 1,
+   NSBezelBorder  = 2,
+   NSGrooveBorder = 3
+}
+
+class NSView : NSObject
+{
+    mixin NSObjectTemplate!(NSView, "NSView");
+}
+
+
+// NSWindow
 
 alias NSBackingStoreType = NSUInteger;
 enum : NSBackingStoreType
@@ -258,9 +280,19 @@ class NSWindow : NSResponder
 {
     mixin NSObjectTemplate!(NSWindow, "NSWindow");
 
-    void initWithContentRect(NSRect contentRect, NSUInteger windowStyle, NSBackingStoreType bufferingType, bool deferCreation)
+    void initWithContentRect(NSRect contentRect)
+    {
+        objc_msgSend(_id, sel!"initWithContentRect:", contentRect);
+    }
+
+    void initWithContentRect(NSRect contentRect, NSUInteger windowStyle, NSBackingStoreType bufferingType, BOOL deferCreation)
     {
         objc_msgSend(_id, sel!"initWithContentRect:styleMask:backing:defer:", contentRect, windowStyle, bufferingType, deferCreation);
     }
 
+    NSView contentView()
+    {
+        id result = objc_msgSend(_id, sel!"contentView");
+        return result ? new NSView(result) : null;
+    }
 }

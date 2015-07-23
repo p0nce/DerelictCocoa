@@ -71,7 +71,8 @@ id toID(NSObject object)
 // Mixin'd by all Cocoa objects
 mixin template NSObjectTemplate(T, string className)
 {
-    // create a new object on the GC heap
+    /// Create a new object on the GC heap
+    /// And calls init on it.
     this()
     {
         id myClass = getClassID();
@@ -84,6 +85,12 @@ mixin template NSObjectTemplate(T, string className)
     {
         assert(id_ !is null); // use null instead of NSObject containing null
         this._id = id_;
+    }
+
+    /// Allocates, but do not init
+    static T alloc()
+    {
+        return new T( objc_msgSend(getClassID(), sel!"alloc") );
     }
 
     static Class getClass()
