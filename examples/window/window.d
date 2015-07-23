@@ -5,7 +5,7 @@ void main(string[] args)
 {
 	DerelictCocoa.load();
 
-	NSAutoreleasePool pool = NSAutoreleasePool.alloc.init;
+    NSAutoreleasePool pool = NSAutoreleasePool.alloc.init;
 	
 	NSApplication NSApp = NSApplication.sharedApplication;
 

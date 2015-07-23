@@ -272,31 +272,31 @@ Ivar object_setInstanceVariable (id obj, string name, void* value)
     return varobject_setInstanceVariable(obj, name.ptr, value);
 }
 
-string sel_registerName (string str)
+SEL sel_registerName (string str)
 {
-    return fromStringz(varsel_registerName(str.ptr)).idup;
+    return varsel_registerName(str.ptr);    
 }
 
-id objc_msgSend (ARGS...)(id theReceiver, string theSelector, ARGS args)
+id objc_msgSend (ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
-    return varobjc_msgSend(theReceiver, theSelector.ptr, args);
+    return varobjc_msgSend(theReceiver, theSelector, args);
 }
 
-void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, string theSelector, ARGS args)
+void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, SEL theSelector, ARGS args)
 {
     varobjc_msgSend_stret(stretAddr, theReceiver, theSelector.ptr, args);
 }
 
-id objc_msgSendSuper (ARGS...)(objc_super* superr, string op, ARGS args)
+id objc_msgSendSuper (ARGS...)(objc_super* superr, SEL theSelector, ARGS args)
 {
-    return varobjc_msgSendSuper(superr, op.ptr, args);
+    return varobjc_msgSendSuper(superr, theSelector, args);
 }
 
 version (X86)
 {
-    double objc_msgSend_fpret(ARGS...)(id self, string op, ARGS args)
+    double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
     {
-        return varobjc_msgSend_fpret(self, op.ptr, args);
+        return varobjc_msgSend_fpret(self, theSelector, args);
     }
 }
 

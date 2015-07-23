@@ -270,7 +270,7 @@ class NSMenuItem : NSObject
 
     NSMenuItem initWithTitle (NSString itemName, string anAction, NSString charCode)
     {
-        id result = objc_msgSend(this.id_, sel_initWithTitle_action_keyEquivalent, itemName ? itemName.id_ : null, sel_registerName(anAction).ptr, charCode ? charCode.id_ : null);
+        id result = objc_msgSend(this.id_, sel_initWithTitle_action_keyEquivalent, itemName ? itemName.id_ : null, sel_registerName(anAction), charCode ? charCode.id_ : null);
         return result ? new NSMenuItem(result) : null;
     }
 
