@@ -53,13 +53,6 @@ __gshared
     pfNSAllocateMemoryPages NSAllocateMemoryPages;
 }
 
-unittest
-{
-    static if(Derelict_OS_Mac)   
-        DerelictFoundation.load();
-}
-
-
 id toID(NSObject object)
 {
     if (object is null)
