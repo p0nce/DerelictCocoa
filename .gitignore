@@ -2,3 +2,5 @@ dub.selections.json
 .dub
 lib
 *.sublime-project
+examples/window/.DS_Store
+examples/window/window

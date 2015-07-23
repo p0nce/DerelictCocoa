@@ -9,11 +9,8 @@ void main(string[] args)
 	
 	NSApplication NSApp = NSApplication.sharedApplication;
 
-
-	/*
-    [NSAutoreleasePool new];
-    [NSApplication sharedApplication];
-    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+    NSApp.setActivationPolicy(NSApplicationActivationPolicyRegular);
+/+    
     id menubar = [[NSMenu new] autorelease];
     id appMenuItem = [[NSMenuItem new] autorelease];
     [menubar addItem:appMenuItem];
@@ -34,5 +31,5 @@ void main(string[] args)
     [NSApp activateIgnoringOtherApps:YES];
     [NSApp run];
     return 0;
-    */
+    +/
 }

@@ -43,6 +43,7 @@ import derelict.util.loader;
 
 package:
 
+/+
 const NSApplication NSApp;
 
 typedef int function(int argc, /*const*/ char *argv[]) pfNSApplicationMain;
@@ -55,6 +56,7 @@ static this ()
     NSApp = NSApplication.sharedApplication;
     bindFunc(NSApplicationMain)("NSApplicationMain", cocoa);
 }
++/
 
 class NSApplication : NSObject
 {
@@ -122,6 +124,8 @@ class NSApplication : NSObject
     {
         objc_msgSend(this.id_, sel_setDelegate, object ? object.id_ : null);
     }
+
+    void setApplicationPolicy
 
     void run ()
     {

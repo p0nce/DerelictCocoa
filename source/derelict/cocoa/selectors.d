@@ -33,6 +33,20 @@ module derelict.cocoa.selectors;
 
 import derelict.cocoa.runtime;
 
+// Lazy selector literal
+// eg: sel!"init"
+// Not thread-safe
+SEL sel(string selectorName)()
+{
+    __gshared SEL cached = null;
+
+    if (cached is null)
+    {
+        cached = sel_registerName(selectorName);
+    }       
+    return cached;
+}
+
 __gshared
 {
     // Classes
@@ -89,6 +103,7 @@ __gshared
     SEL sel_setupWorkingDirectory;
     SEL sel_application;
     SEL sel_applicationDidFinishLaunching;
+    SEL sel_setApplicationPolicy;
     SEL sel_initWithTitle_action_keyEquivalent;
 }
 
@@ -146,17 +161,4 @@ void loadSelectors()
     sel_application = sel_registerName("application:openFile:");
     sel_applicationDidFinishLaunching = sel_registerName("applicationDidFinishLaunching:");
     sel_initWithTitle_action_keyEquivalent = sel_registerName("initWithTitle:action:keyEquivalent:");
-
-    // Lazy selector literal
-    // eg: sel!"init"
-    // Not thread-safe
-    string sel(string selectorName)()
-    {
-        __gshared string cached = null;
-
-        if (cached is null)
-        {
-            cached = registerName(selectorName);
-        }       
-    }
 }

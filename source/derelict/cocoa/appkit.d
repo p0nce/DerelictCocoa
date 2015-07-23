@@ -74,6 +74,14 @@ enum
     NSDeviceIndependentModifierFlagsMask = 0xffff0000U
 }
 
+alias NSApplicationActivationPolicy = NSInteger;
+enum : NSApplicationActivationPolicy
+{
+   NSApplicationActivationPolicyRegular = 0,
+   NSApplicationActivationPolicyAccessory = 1,
+   NSApplicationActivationPolicyProhibited = 2 
+}
+
 class NSApplication : NSObject
 {
     this ()
@@ -139,6 +147,11 @@ class NSApplication : NSObject
     void setDelegate (ID object)
     {
         objc_msgSend(this.id_, sel_setDelegate, object ? object.id_ : null);
+    }
+
+    void setActivationPolicy(NSApplicationActivationPolicy policy)
+    {
+        objc_msgSend(this.id_, sel!"setActivationPolicy:", policy);
     }
 
     void run ()
