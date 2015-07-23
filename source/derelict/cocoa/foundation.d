@@ -68,80 +68,59 @@ id toID(NSObject object)
         return object._id;
 }
 
-class NSObject
+// Mixin'd by all Cocoa objects
+mixin template NSObjectTemplate(T, string className)
 {
-    id _id = null;    
+    // create a new object on the GC heap
+    this()
+    {
+        id myClass = getClassID();
+        this( objc_msgSend(myClass, sel!"alloc") );
+    }
 
-    alias _id this;
-
+    // create from an id
     this (id id_)
     {
         assert(id_ !is null); // use null instead of NSObject containing null
         this._id = id_;
     }
 
-    static NSObject alloc ()
+    static Class getClass()
     {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSObject(result) : null;
+        return cast(Class)( lazyClass!className() );
     }
 
-    static Class class_ ()
+    static id getClassID()
     {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
+        return lazyClass!className();
     }
+}
 
+class NSObject
+{
+    id _id = null;
+
+    mixin NSObjectTemplate!(NSObject, "NSObject");
+    
     static void poseAsClass (Class aClass)
     {
         objc_msgSend(lazyClass!"NSObject", sel!"poseAsClass:", aClass);
     }
 
-    NSObject init ()
+    final NSObject init ()
     {
         id result = objc_msgSend(_id, sel!"init");
         return result ? this : null;
     }
 
-    void release ()
+    final void release ()
     {
         objc_msgSend(_id, sel!"release");
     }
 }
 class NSString : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSString alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSString(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSString init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSString, "NSString");
 
     static NSString stringWith (string str)
     {
@@ -224,33 +203,7 @@ class NSString : NSObject
 
 class NSEnumerator : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSEnumerator alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSEnumerator(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSEnumerator init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSEnumerator, "NSEnumerator");
 
     id nextObject ()
     {
@@ -260,33 +213,7 @@ class NSEnumerator : NSObject
 
 class NSArray : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSArray alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSArray(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSArray init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSArray, "NSArray");
 
     NSEnumerator objectEnumerator ()
     {
@@ -298,33 +225,7 @@ class NSArray : NSObject
 
 class NSProcessInfo : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSProcessInfo alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSProcessInfo(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSProcessInfo init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSProcessInfo, "NSProcessInfo");
 
     static NSProcessInfo processInfo ()
     {
@@ -341,64 +242,12 @@ class NSProcessInfo : NSObject
 
 class NSNotification : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSNotification alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSNotification(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSNotification init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSNotification, "NSNotification");
 }
 
 class NSDictionary : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSDictionary alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSDictionary(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSDictionary init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSDictionary, "NSDictionary");
 
     id objectForKey(id key)
     {
@@ -409,36 +258,5 @@ class NSDictionary : NSObject
 
 class NSAutoreleasePool : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSAutoreleasePool alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSAutoreleasePool(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSAutoreleasePool init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
-
-    override void release ()
-    {
-        objc_msgSend(_id, sel!"release");
-    }
+    mixin NSObjectTemplate!(NSAutoreleasePool, "NSAutoreleasePool");
 }

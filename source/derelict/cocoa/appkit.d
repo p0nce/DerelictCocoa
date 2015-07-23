@@ -83,33 +83,7 @@ enum : NSApplicationActivationPolicy
 
 class NSApplication : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSApplication alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSApplication(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSApplication init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSApplication, "NSApplication");
 
     public static NSApplication sharedApplication ()
     {
@@ -166,33 +140,7 @@ class NSApplication : NSObject
 
 class NSMenu : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSMenu alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSMenu(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSMenu init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSMenu, "NSMenu");
 
     NSString title ()
     {
@@ -236,33 +184,7 @@ class NSMenu : NSObject
 
 class NSMenuItem : NSObject
 {
-    this (id id_)
-    {
-        super(id_);
-    }
-
-    static NSMenuItem alloc ()
-    {
-        id result = objc_msgSend(cast(id)class_, sel!"alloc");
-        return result ? new NSMenuItem(result) : null;
-    }
-
-    static Class class_ ()
-    {
-        string name = this.classinfo.name;
-        size_t index = name.lastIndexOf('.');
-
-        if (index != -1)
-            name = name[index + 1 .. $];
-
-        return cast(Class) objc_getClass(name);
-    }
-
-    override NSMenuItem init ()
-    {
-        id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
-    }
+    mixin NSObjectTemplate!(NSMenuItem, "NSMenuItem");
 
     static NSMenuItem separatorItem ()
     {

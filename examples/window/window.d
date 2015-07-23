@@ -5,14 +5,14 @@ void main(string[] args)
 {
 	DerelictCocoa.load();
 
-    NSAutoreleasePool pool = NSAutoreleasePool.alloc.init;
+    auto pool = new NSAutoreleasePool;
 	
-	NSApplication NSApp = NSApplication.sharedApplication;
+	auto NSApp = NSApplication.sharedApplication;
 
     NSApp.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
-    NSMenu menubar = NSMenu.alloc.init;
-    NSMenuItem appMenuItem = NSMenuItem.alloc.init;
+    NSMenu menubar = new NSMenu;
+    NSMenuItem appMenuItem = new NSMenuItem;
 
     menubar.addItem(appMenuItem);
     NSApp.setMainMenu(menubar);
