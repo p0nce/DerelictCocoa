@@ -64,11 +64,20 @@ struct NSRect
     NSSize size;
 }
 
+NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h)
+{
+    return NSRect(NSPoint(x, y), NSSize(w, h));
+}
+
 struct NSSize
 {
     CGFloat width;
     CGFloat height;
 }
+
+alias SEL = char*;
+alias Class = objc_class*;
+alias id = objc_object*;
 
 
 // Below is internal use only
@@ -78,9 +87,7 @@ alias Ivar = objc_ivar*;
 alias Method = objc_method*;
 alias Protocol = objc_object;
 
-alias SEL = char*;
-alias Class = objc_class*;
-alias id = objc_object*;
+
 
 alias IMP = extern (C) id function(id, SEL, ...);
 

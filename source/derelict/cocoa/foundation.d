@@ -76,6 +76,7 @@ mixin template NSObjectTemplate(T, string className)
     {
         id myClass = getClassID();
         this( objc_msgSend(myClass, sel!"alloc") );
+        init(); // call init                
     }
 
     // create from an id
@@ -107,6 +108,12 @@ class NSObject
         objc_msgSend(lazyClass!"NSObject", sel!"poseAsClass:", aClass);
     }
 
+    ~this()
+    {
+        // once the GC release this, call release
+        release();
+    }
+
     final NSObject init ()
     {
         id result = objc_msgSend(_id, sel!"init");
@@ -131,6 +138,11 @@ class NSString : NSObject
     static NSString opAssign (string str)
     {
         return stringWith(str);
+    }
+
+    override string toString()
+    {
+        return fromStringz(UTF8String()).idup;
     }
 
     NSUInteger length ()

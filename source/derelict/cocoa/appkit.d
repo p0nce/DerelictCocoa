@@ -231,3 +231,36 @@ class NSMenuItem : NSObject
     }
 }
 
+class NSResponder : NSObject
+{
+    mixin NSObjectTemplate!(NSResponder, "NSResponder");
+}
+
+alias NSBackingStoreType = NSUInteger;
+enum : NSBackingStoreType
+{
+    NSBackingStoreRetained     = 0,
+    NSBackingStoreNonretained  = 1,
+    NSBackingStoreBuffered     = 2
+}
+
+enum : NSUInteger 
+{
+   NSBorderlessWindowMask = 0,
+   NSTitledWindowMask = 1 << 0,
+   NSClosableWindowMask = 1 << 1,
+   NSMiniaturizableWindowMask = 1 << 2,
+   NSResizableWindowMask = 1 << 3,
+   NSTexturedBackgroundWindowMask = 1 << 8
+}
+
+class NSWindow : NSResponder
+{
+    mixin NSObjectTemplate!(NSWindow, "NSWindow");
+
+    void initWithContentRect(NSRect contentRect, NSUInteger windowStyle, NSBackingStoreType bufferingType, bool deferCreation)
+    {
+        objc_msgSend(_id, sel!"initWithContentRect:styleMask:backing:defer:", contentRect, windowStyle, bufferingType, deferCreation);
+    }
+
+}
