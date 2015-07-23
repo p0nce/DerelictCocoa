@@ -35,11 +35,10 @@ import derelict.util.system;
 import derelict.util.loader;
 
 import derelict.cocoa.runtime;
-import derelict.cocoa.selectors;
 import derelict.cocoa.foundation;
 
 static if(Derelict_OS_Mac)
-    enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
+    enum libNames = "/System/Library/Frameworks/Cocoa.framework/Cocoa";
 else static if(Derelict_OS_Windows)
     enum libNames = "dummy (for testing)";
 else
@@ -81,7 +80,6 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
             bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
 
-            loadSelectors();
         }
     }
 }

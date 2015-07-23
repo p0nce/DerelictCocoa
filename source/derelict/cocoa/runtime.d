@@ -305,4 +305,31 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
     return varclass_getInstanceMethod(aClass, aSelector.ptr);
 }
 
+// Lazy selector literal
+// eg: sel!"init"
+// Not thread-safe!
+SEL sel(string selectorName)()
+{
+    __gshared SEL cached = null;
+
+    if (cached is null)
+    {
+        cached = sel_registerName(selectorName);
+    }       
+    return cached;
+}
+
+// Lazy class object
+// eg: lazyClass!"NSObject"
+// Not thread-safe!
+id lazyClass(string className)()
+{
+    __gshared id cached = null;
+
+    if (cached is null)
+    {
+        cached = objc_getClass(className);
+    }       
+    return cached;
+}
 

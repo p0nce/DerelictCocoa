@@ -96,7 +96,7 @@ class NSApplication : NSObject
 
     static NSApplication alloc ()
     {
-        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        id result = objc_msgSend(cast(id)class_, sel!"alloc");
         return result ? new NSApplication(result) : null;
     }
 
@@ -113,40 +113,40 @@ class NSApplication : NSObject
 
     override NSApplication init ()
     {
-        id result = objc_msgSend(this.id_, sel_init);
+        id result = objc_msgSend(this.id_, sel!"init");
         return result ? this : null;
     }
 
     public static NSApplication sharedApplication ()
     {
-        id result = objc_msgSend(class_NSApplication, sel_sharedApplication);
+        id result = objc_msgSend(lazyClass!"NSApplication", sel!"sharedApplication");
         return result ? new NSApplication(result) : null;
     }
 
     NSMenu mainMenu ()
     {
-        id result = objc_msgSend(this.id_, sel_mainMenu);
+        id result = objc_msgSend(this.id_, sel!"mainMenu");
         return result ? new NSMenu(result) : null;
     }
 
     void setAppleMenu (NSMenu menu)
     {
-        objc_msgSend(this.id_, sel_setAppleMenu, menu ? menu.id_ : null);
+        objc_msgSend(this.id_, sel!"setAppleMenu:", menu ? menu.id_ : null);
     }
 
     void setWindowsMenu (NSMenu menu)
     {
-        objc_msgSend(this.id_, sel_setWindowsMenu, menu ? menu.id_ : null);
+        objc_msgSend(this.id_, sel!"setWindowsMenu:", menu ? menu.id_ : null);
     }
 
     void setMainMenu (NSMenu menu)
     {
-        objc_msgSend(this.id_, sel_setMainMenu, menu ? menu.id_ : null);
+        objc_msgSend(this.id_, sel!"setMainMenu:", menu ? menu.id_ : null);
     }
 
     void setDelegate (ID object)
     {
-        objc_msgSend(this.id_, sel_setDelegate, object ? object.id_ : null);
+        objc_msgSend(this.id_, sel!"setDelegate:", object ? object.id_ : null);
     }
 
     void setActivationPolicy(NSApplicationActivationPolicy policy)
@@ -154,14 +154,19 @@ class NSApplication : NSObject
         objc_msgSend(this.id_, sel!"setActivationPolicy:", policy);
     }
 
+    void activateIgnoringOtherApps(bool b)
+    {
+        objc_msgSend(this.id_, sel!"activateIgnoringOtherApps:", b);
+    }
+
     void run ()
     {
-        objc_msgSend(this.id_, sel_run);
+        objc_msgSend(this.id_, sel!"run");
     }
 
     void stop (ID sender)
     {
-        objc_msgSend(this.id_, sel_stop, sender ? sender.id_ : null);
+        objc_msgSend(this.id_, sel!"stop:", sender ? sender.id_ : null);
     }
 }
 
@@ -179,7 +184,7 @@ class NSMenu : NSObject
 
     static NSMenu alloc ()
     {
-        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        id result = objc_msgSend(cast(id)class_, sel!"alloc");
         return result ? new NSMenu(result) : null;
     }
 
@@ -196,47 +201,47 @@ class NSMenu : NSObject
 
     override NSMenu init ()
     {
-        id result = objc_msgSend(this.id_, sel_init);
+        id result = objc_msgSend(this.id_, sel!"init");
         return result ? this : null;
     }
 
     NSString title ()
     {
-        id result = objc_msgSend(this.id_, sel_title);
+        id result = objc_msgSend(this.id_, sel!"title");
         return result ? new NSString(result) : null;
     }
 
     NSMenu initWithTitle (NSString aTitle)
     {
-        id result = objc_msgSend(this.id_, sel_initWithTitle, aTitle ? aTitle.id_ : null);
+        id result = objc_msgSend(this.id_, sel!"initWithTitle:", aTitle ? aTitle.id_ : null);
         return result ? new NSMenu(result) : null;
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(this.id_, sel_setTitle, str ? str.id_ : null);
+        objc_msgSend(this.id_, sel!"setTitle:", str ? str.id_ : null);
     }
 
     NSArray itemArray ()
     {
-        id result = objc_msgSend(this.id_, sel_itemArray);
+        id result = objc_msgSend(this.id_, sel!"itemArray");
         return result ? new NSArray(result) : null;
     }
 
     void sizeToFit ()
     {
-        objc_msgSend(this.id_, sel_sizeToFit);
+        objc_msgSend(this.id_, sel!"sizeToFit");
     }
 
     NSMenuItem addItemWithTitle (NSString str, string selector, NSString keyEquiv)
     {
-        id result = objc_msgSend(this.id_, sel_addItemWithTitle_action_keyEquivalent, str ? str.id_ : null, cast(SEL) selector.ptr, keyEquiv ? keyEquiv.id_ : null);
+        id result = objc_msgSend(this.id_, sel!"addItemWithTitle:action:keyEquivalent:", str ? str.id_ : null, cast(SEL) selector.ptr, keyEquiv ? keyEquiv.id_ : null);
         return result ? new NSMenuItem(result) : null;
     }
 
     void addItem (NSMenuItem newItem)
     {
-        objc_msgSend(this.id_, sel_addItem, newItem ? newItem.id_ : null);
+        objc_msgSend(this.id_, sel!"addItem:", newItem ? newItem.id_ : null);
     }
 }
 
@@ -254,7 +259,7 @@ class NSMenuItem : NSObject
 
     static NSMenuItem alloc ()
     {
-        id result = objc_msgSend(cast(id)class_, sel_alloc);
+        id result = objc_msgSend(cast(id)class_, sel!"alloc");
         return result ? new NSMenuItem(result) : null;
     }
 
@@ -271,52 +276,52 @@ class NSMenuItem : NSObject
 
     override NSMenuItem init ()
     {
-        id result = objc_msgSend(this.id_, sel_init);
+        id result = objc_msgSend(this.id_, sel!"init");
         return result ? this : null;
     }
 
     static NSMenuItem separatorItem ()
     {
-        id result = objc_msgSend(class_NSMenuItem, sel_separatorItem);
+        id result = objc_msgSend(lazyClass!"NSMenuItem", sel!"separatorItem");
         return result ? new NSMenuItem(result) : null;
     }
 
     NSMenuItem initWithTitle (NSString itemName, string anAction, NSString charCode)
     {
-        id result = objc_msgSend(this.id_, sel_initWithTitle_action_keyEquivalent, itemName ? itemName.id_ : null, sel_registerName(anAction), charCode ? charCode.id_ : null);
+        id result = objc_msgSend(this.id_, sel!"initWithTitle:action:keyEquivalent:", itemName ? itemName.id_ : null, sel_registerName(anAction), charCode ? charCode.id_ : null);
         return result ? new NSMenuItem(result) : null;
     }
 
     NSString title ()
     {
-        id result = objc_msgSend(this.id_, sel_title);
+        id result = objc_msgSend(this.id_, sel!"title");
         return result ? new NSString(result) : null;
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(this.id_, sel_setTitle, str ? str.id_ : null);
+        objc_msgSend(this.id_, sel!"setTitle:", str ? str.id_ : null);
     }
 
     bool hasSubmenu ()
     {
-        return objc_msgSend(this.id_, sel_hasSubmenu) !is null;
+        return objc_msgSend(this.id_, sel!"hasSubmenu") !is null;
     }
 
     NSMenu submenu ()
     {
-        id result = objc_msgSend(this.id_, sel_submenu);
+        id result = objc_msgSend(this.id_, sel!"submenu");
         return result ? new NSMenu(result) : null;
     }
 
     void setKeyEquivalentModifierMask (NSUInteger mask)
     {
-        objc_msgSend(this.id_, sel_setKeyEquivalentModifierMask, mask);
+        objc_msgSend(this.id_, sel!"setKeyEquivalentModifierMask:", mask);
     }
 
     void setSubmenu (NSMenu submenu)
     {
-        objc_msgSend(this.id_, sel_setSubmenu, submenu ? submenu.id_ : null);
+        objc_msgSend(this.id_, sel!"setSubmenu:", submenu ? submenu.id_ : null);
     }
 }
 
