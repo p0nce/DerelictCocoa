@@ -295,4 +295,9 @@ class NSWindow : NSResponder
         id result = objc_msgSend(_id, sel!"contentView");
         return result ? new NSView(result) : null;
     }
+
+    void makeKeyAndOrderFront()
+    {
+        objc_msgSend(_id, sel!"makeKeyAndOrderFront:");
+    }
 }

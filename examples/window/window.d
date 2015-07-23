@@ -23,6 +23,7 @@ void main(string[] args)
 
     NSWindow window = NSWindow.alloc();
     window.initWithContentRect(NSMakeRect(10, 10, 200, 200), NSBorderlessWindowMask, NSBackingStoreBuffered, NO);
+    window.makeKeyAndOrderFront();
 
     NSApp.activateIgnoringOtherApps(YES);
     NSApp.run();
