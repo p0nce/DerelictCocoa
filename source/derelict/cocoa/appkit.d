@@ -31,6 +31,8 @@
 */
 module derelict.cocoa.appkit;
 
+version(OSX):
+
 import std.string;
 
 import derelict.cocoa.runtime;

@@ -31,6 +31,8 @@
  */
 module derelict.cocoa.foundation;
 
+version(OSX):
+
 import std.string;
 import std.utf;
 

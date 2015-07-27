@@ -31,6 +31,8 @@
 */
 module derelict.cocoa.cocoa;
 
+version(OSX):
+
 import derelict.util.system;
 import derelict.util.loader;
 

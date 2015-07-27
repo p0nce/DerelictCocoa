@@ -31,6 +31,8 @@
 */
 module derelict.cocoa.runtime;
 
+version(OSX):
+
 import std.string;
 
 import derelict.util.loader;
