@@ -64,12 +64,28 @@ struct NSRect
     NSSize size;
 }
 
+NSRect NSMakeRect(CGFloat x, CGFloat y, CGFloat w, CGFloat h)
+{
+    return NSRect(NSPoint(x, y), NSSize(w, h));
+}
+
 struct NSSize
 {
     CGFloat width;
     CGFloat height;
 }
 
+alias SEL = char*;
+alias Class = objc_class*;
+alias id = objc_object*;
+
+
+alias BOOL = char;
+enum : BOOL
+{
+    NO = 0,
+    YES = 1
+}
 
 // Below is internal use only
 package:
@@ -78,9 +94,7 @@ alias Ivar = objc_ivar*;
 alias Method = objc_method*;
 alias Protocol = objc_object;
 
-alias SEL = char*;
-alias Class = objc_class*;
-alias id = objc_object*;
+
 
 alias IMP = extern (C) id function(id, SEL, ...);
 
@@ -174,9 +188,9 @@ extern (C) nothrow @nogc
     alias Class function (Class superclass, const(char)* name, size_t extraBytes) pfobjc_allocateClassPair;
     alias id function (const(char)* name) pfobjc_getClass;
     alias id function (const(char)* name) pfobjc_lookUpClass;
-    alias id function (id theReceiver, SEL theSelector, ...) pfobjc_msgSend;
-    alias id function (objc_super* superr, SEL op, ...) pfobjc_msgSendSuper;
-    alias void function (void* stretAddr, id theReceiver, SEL theSelector, ...) pfobjc_msgSend_stret;
+    alias id function (id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend;
+    alias id function (objc_super* superr, const(SEL) op, ...) pfobjc_msgSendSuper;
+    alias void function (void* stretAddr, id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend_stret;
     alias const(char)* function (id obj) pfobject_getClassName;
     alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
     alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
@@ -231,7 +245,25 @@ Class objc_allocateClassPair (Class superclass, string name, size_t extraBytes)
 
 id objc_getClass (string name)
 {
-    return varobjc_getClass(name.ptr);
+    import std.stdio;
+    id result = varobjc_getClass(toStringz(name));
+
+    if (result is null)
+        throw new Exception("objc_getClass failed with class " ~ name);
+    
+/*
+    debug {
+        import std.stdio;
+        Class isa = result.isa;
+        assert(isa !is null);
+        assert(isa.name !is null);
+
+        writeln("name = ", object_getClassName(result));
+        writeln("info = ", isa.info);
+        writeln("version = ", isa.versionn);
+    }*/
+
+    return result;
 }
 
 id objc_lookUpClass (string name)
@@ -254,31 +286,31 @@ Ivar object_setInstanceVariable (id obj, string name, void* value)
     return varobject_setInstanceVariable(obj, name.ptr, value);
 }
 
-string sel_registerName (string str)
+SEL sel_registerName (string str)
 {
-    return fromStringz(varsel_registerName(str.ptr)).idup;
+    return varsel_registerName(str.ptr);    
 }
 
-id objc_msgSend (ARGS...)(id theReceiver, string theSelector, ARGS args)
+id objc_msgSend (ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
-    return varobjc_msgSend(theReceiver, theSelector.ptr, args);
+    return varobjc_msgSend(theReceiver, theSelector, args);
 }
 
-void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, string theSelector, ARGS args)
+void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, SEL theSelector, ARGS args)
 {
     varobjc_msgSend_stret(stretAddr, theReceiver, theSelector.ptr, args);
 }
 
-id objc_msgSendSuper (ARGS...)(objc_super* superr, string op, ARGS args)
+id objc_msgSendSuper (ARGS...)(objc_super* superr, SEL theSelector, ARGS args)
 {
-    return varobjc_msgSendSuper(superr, op.ptr, args);
+    return varobjc_msgSendSuper(superr, theSelector, args);
 }
 
 version (X86)
 {
-    double objc_msgSend_fpret(ARGS...)(id self, string op, ARGS args)
+    double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
     {
-        return varobjc_msgSend_fpret(self, op.ptr, args);
+        return varobjc_msgSend_fpret(self, theSelector, args);
     }
 }
 
@@ -287,4 +319,31 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
     return varclass_getInstanceMethod(aClass, aSelector.ptr);
 }
 
+// Lazy selector literal
+// eg: sel!"init"
+// Not thread-safe!
+SEL sel(string selectorName)()
+{
+    __gshared SEL cached = null;
+
+    if (cached is null)
+    {
+        cached = sel_registerName(selectorName);
+    }       
+    return cached;
+}
+
+// Lazy class object
+// eg: lazyClass!"NSObject"
+// Not thread-safe!
+id lazyClass(string className)()
+{
+    __gshared id cached = null;
+
+    if (cached is null)
+    {
+        cached = objc_getClass(className);
+    }       
+    return cached;
+}
 

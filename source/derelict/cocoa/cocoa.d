@@ -35,12 +35,10 @@ import derelict.util.system;
 import derelict.util.loader;
 
 import derelict.cocoa.runtime;
-import derelict.cocoa.selectors;
+import derelict.cocoa.foundation;
 
 static if(Derelict_OS_Mac)
-    enum libNames = "../Frameworks/Cocoa.framework/Cocoa, /Library/Frameworks/Cocoa.framework/Cocoa, /System/Library/Frameworks/Cocoa.framework/Cocoa";
-else static if(Derelict_OS_Windows)
-enum libNames = "dummy (for testing)";
+    enum libNames = "/System/Library/Frameworks/Cocoa.framework/Cocoa";
 else
     static assert(0, "Need to implement Cocoa libNames for this operating system.");
 
@@ -56,6 +54,7 @@ class DerelictCocoaLoader : SharedLibLoader
 
         override void loadSymbols()
         {
+            // Runtime
             bindFunc(cast(void**)&objc_registerClassPair, "objc_registerClassPair");
             bindFunc(cast(void**)&varclass_addIvar, "class_addIvar");
             bindFunc(cast(void**)&varclass_addMethod, "class_addMethod");
@@ -74,7 +73,11 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
 
-            loadSelectors();
+
+            // Foundation
+            bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
+            bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
+
         }
     }
 }
@@ -87,3 +90,8 @@ shared static this()
     DerelictCocoa = new DerelictCocoaLoader;
 }
 
+unittest
+{
+    static if(Derelict_OS_Mac)   
+        DerelictCocoa.load();
+}

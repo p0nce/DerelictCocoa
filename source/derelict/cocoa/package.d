@@ -37,7 +37,9 @@
 
 module derelict.cocoa;
 
+public import derelict.cocoa.runtime;
 public import derelict.cocoa.foundation;
 public import derelict.cocoa.cocoa;
+public import derelict.cocoa.appkit;
 
 

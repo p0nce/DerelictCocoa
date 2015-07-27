@@ -1,9 +1,9 @@
 DerelictCocoa
 =============
 
-*Warning: this an unofficial Derelict binding.*
+*Warning: this a VERY bare-bones unofficial Derelict binding.*
 
-A dynamic binding to [Cocoa](http://leenissen.dk/fann/wp/) for the D Programming Language. **This binding is incomplete. Use PR to add more stuff.**
+A dynamic binding to [Cocoa](https://en.wikipedia.org/wiki/Cocoa_(API)) for the D Programming Language. **This binding is incomplete. Use PR to add more stuff.**
 
 For information on how to build DerelictCocoa and link it with your programs, please see the post [Using Derelict](http://dblog.aldacron.net/derelict-help/using-derelict/) at The One With D.
 
