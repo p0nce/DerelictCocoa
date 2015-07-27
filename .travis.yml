@@ -7,4 +7,4 @@ d:
  - gdc-4.9.2
  
 script:
-  - dub test
+  - dub test --compiler=${DC} 
