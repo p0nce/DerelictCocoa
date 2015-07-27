@@ -38,30 +38,6 @@ import std.string;
 import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
 
-
-// Is this useful?
-
-/*
-extern(C) pure nothrow
-{
-    alias int function(int argc, const(char)**argv) pfNSApplicationMain;
-}
-
-__gshared
-{
-    pfNSApplicationMain NSApplicationMain;
-}
-
-static this ()
-{
-    SharedLib cocoa = Derelict_LoadSharedLib("Cocoa.framework/Cocoa");
-
-    NSApp = NSApplication.sharedApplication;
-    bindFunc(NSApplicationMain)("NSApplicationMain", cocoa);
-}*/
-
-
-
 enum
 {
     NSAlphaShiftKeyMask = 1 << 16,
@@ -301,5 +277,106 @@ class NSWindow : NSResponder
     void makeKeyAndOrderFront()
     {
         objc_msgSend(_id, sel!"makeKeyAndOrderFront:");
+    }
+
+    NSEvent nextEventMatchingMask(NSUInteger eventMask)
+    {
+        id result = objc_msgSend(_id, sel!"nextEventMatchingMask:", eventMask);
+        return result ? new NSEvent(result) : null;        
+    }
+}
+
+
+alias NSEventType = int;
+enum : NSEventType
+{
+    NSLeftMouseDown       = 1,
+    NSLeftMouseUp         = 2,
+    NSRightMouseDown      = 3,
+    NSRightMouseUp        = 4,
+    NSMouseMoved          = 5,
+    NSLeftMouseDragged    = 6,
+    NSRightMouseDragged   = 7,
+    NSMouseEntered        = 8,
+    NSMouseExited         = 9,
+    NSKeyDown             = 10,
+    NSKeyUp               = 11,
+    NSFlagsChanged        = 12,
+    NSAppKitDefined       = 13,
+    NSSystemDefined       = 14,
+    NSApplicationDefined  = 15,
+    NSPeriodic            = 16,
+    NSCursorUpdate        = 17,
+    NSScrollWheel         = 22,
+    NSTabletPoint         = 23,
+    NSTabletProximity     = 24,   
+    NSOtherMouseDown      = 25,
+    NSOtherMouseUp        = 26,
+    NSOtherMouseDragged   = 27,
+    NSRotate              = 18,
+    NSBeginGesture        = 19,
+    NSEndGesture          = 20,
+    NSMagnify             = 30,
+    NSSwipe               = 31
+}
+
+enum : NSUInteger
+{
+    NSLeftMouseDownMask      = 1 << NSLeftMouseDown,
+    NSLeftMouseUpMask        = 1 << NSLeftMouseUp,
+    NSRightMouseDownMask     = 1 << NSRightMouseDown,
+    NSRightMouseUpMask       = 1 << NSRightMouseUp,
+    NSMouseMovedMask         = 1 << NSMouseMoved,
+    NSLeftMouseDraggedMask   = 1 << NSLeftMouseDragged,
+    NSRightMouseDraggedMask  = 1 << NSRightMouseDragged,
+    NSMouseEnteredMask       = 1 << NSMouseEntered,
+    NSMouseExitedMask        = 1 << NSMouseExited,
+    NSKeyDownMask            = 1 << NSKeyDown,
+    NSKeyUpMask              = 1 << NSKeyUp,
+    NSFlagsChangedMask       = 1 << NSFlagsChanged,
+    NSAppKitDefinedMask      = 1 << NSAppKitDefined,
+    NSSystemDefinedMask      = 1 << NSSystemDefined,
+    NSApplicationDefinedMask = 1 << NSApplicationDefined,
+    NSPeriodicMask           = 1 << NSPeriodic,
+    NSCursorUpdateMask       = 1 << NSCursorUpdate,
+    NSScrollWheelMask        = 1 << NSScrollWheel,
+    NSTabletPointMask        = 1 << NSTabletPoint,
+    NSTabletProximityMask    = 1 << NSTabletProximity,
+    NSOtherMouseDownMask     = 1 << NSOtherMouseDown,
+    NSOtherMouseUpMask       = 1 << NSOtherMouseUp,
+    NSOtherMouseDraggedMask  = 1 << NSOtherMouseDragged,
+    NSRotateMask             = 1 << NSRotate,
+    NSBeginGestureMask       = 1 << NSBeginGesture,
+    NSEndGestureMask         = 1 << NSEndGesture,
+    NSMagnifyMask            = 1 << NSMagnify,
+    NSSwipeMask              = 1 << NSSwipe,
+    NSAnyEventMask           = 0xffffffffU,
+}
+
+class NSEvent : NSObject
+{
+    mixin NSObjectTemplate!(NSEvent, "NSEvent");
+
+    NSWindow window()
+    {
+        id result = objc_msgSend(_id, sel!"window");
+        return result ? new NSWindow(result) : null;
+    }
+
+    NSEventType type()
+    {
+        id result = objc_msgSend(_id, sel!"type");
+        return cast(NSEventType)result;
+    }
+
+    double deltaX()
+    {
+        return objc_msgSend_fpret(_id, sel!"deltaX");
+    }
+
+    double deltaY()
+    {
+
+        return objc_msgSend_fpret(_id, sel!"deltaY");
     }
 }

@@ -70,7 +70,7 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&varobject_getInstanceVariable, "object_getInstanceVariable");
             bindFunc(cast(void**)&varobject_setInstanceVariable, "object_setInstanceVariable");
             bindFunc(cast(void**)&varsel_registerName, "sel_registerName");
-            version(X86) bindFunc(cast(void**)&varobjc_msgSend_fpret, "objc_msgSend_fpret");
+          /*  version(X86)*/ bindFunc(cast(void**)&varobjc_msgSend_fpret, "objc_msgSend_fpret");
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");

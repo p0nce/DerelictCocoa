@@ -197,7 +197,7 @@ extern (C) nothrow @nogc
     alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
     alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
     alias SEL function (const(char)* str) pfsel_registerName;
-    version (X86)
+ //   version (X86)
         alias double function (id self, SEL op, ...) pfobjc_msgSend_fpret;
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
@@ -222,7 +222,7 @@ __gshared
     pfobject_setInstanceVariable varobject_setInstanceVariable;
     pfsel_registerName varsel_registerName;
 
-    version (X86)
+  //  version (X86)
         pfobjc_msgSend_fpret varobjc_msgSend_fpret;
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
@@ -252,18 +252,6 @@ id objc_getClass (string name)
 
     if (result is null)
         throw new Exception("objc_getClass failed with class " ~ name);
-    
-/*
-    debug {
-        import std.stdio;
-        Class isa = result.isa;
-        assert(isa !is null);
-        assert(isa.name !is null);
-
-        writeln("name = ", object_getClassName(result));
-        writeln("info = ", isa.info);
-        writeln("version = ", isa.versionn);
-    }*/
 
     return result;
 }
@@ -313,6 +301,16 @@ version (X86)
     double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
     {
         return varobjc_msgSend_fpret(self, theSelector, args);
+    }
+}
+else
+{
+    double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
+    {
+        // Strange, it isn't supposed to be work with varobjc_msgSend_fpret.
+        // This really shouldn't work, I don't understand.
+        double result = varobjc_msgSend_fpret(self, theSelector, args);    
+        return result;
     }
 }
 
