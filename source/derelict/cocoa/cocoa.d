@@ -75,7 +75,6 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
 
-
             // Foundation
             bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
             bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");

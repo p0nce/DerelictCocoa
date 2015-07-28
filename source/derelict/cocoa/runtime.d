@@ -31,6 +31,10 @@
 */
 module derelict.cocoa.runtime;
 
+
+/// Important reading: The "OS X ABI Function Call Guide"
+/// https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/
+
 version(OSX):
 
 import std.string;
@@ -288,12 +292,37 @@ id objc_msgSend (ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 
 void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, SEL theSelector, ARGS args)
 {
-    varobjc_msgSend_stret(stretAddr, theReceiver, theSelector.ptr, args);
+    varobjc_msgSend_stret(stretAddr, theReceiver, theSelector, args);
 }
 
 id objc_msgSendSuper (ARGS...)(objc_super* superr, SEL theSelector, ARGS args)
 {
     return varobjc_msgSendSuper(superr, theSelector, args);
+}
+
+// Added for convenience
+int objc_msgSend_intret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+{
+    return cast(int)( cast(NSInteger)( objc_msgSend(theReceiver, theSelector, args) ) );
+}
+
+// Added for convenience
+int objc_msgSend_uintret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+{
+    return cast(uint)( cast(NSUInteger)( objc_msgSend(theReceiver, theSelector, args) ) );
+}
+
+// Added for convenience
+NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+{
+    union idPoint
+    {
+        id id_;
+        NSPoint pt;
+    }
+    idPoint idp;
+    idp.id_ = objc_msgSend(theReceiver, theSelector, args);
+    return idp.pt;
 }
 
 version (X86)
