@@ -93,9 +93,6 @@ enum : BOOL
     YES = 1
 }
 
-// Below is internal use only
-package:
-
 alias Ivar = objc_ivar*;
 alias Method = objc_method*;
 alias Protocol = objc_object;
@@ -243,14 +240,14 @@ bool class_addIvar (Class cls, string name, size_t size, byte alignment, string 
     return varclass_addIvar(cls, name.ptr, size, alignment, types.ptr);
 }
 
-bool class_addMethod (Class cls, string name, IMP imp, string types)
+bool class_addMethod (Class cls, SEL name, IMP imp, string types)
 {
-    return varclass_addMethod(cls, name.ptr, imp, types.ptr);
+    return varclass_addMethod(cls, name, imp, types.ptr);
 }
 
-Class objc_allocateClassPair (Class superclass, string name, size_t extraBytes)
+Class objc_allocateClassPair (Class superclass, const(char)* name, size_t extraBytes)
 {
-    return varobjc_allocateClassPair(superclass, name.ptr, extraBytes);
+    return varobjc_allocateClassPair(superclass, name, extraBytes);
 }
 
 id objc_getClass (string name)
