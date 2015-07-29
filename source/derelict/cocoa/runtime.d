@@ -204,6 +204,8 @@ extern (C) nothrow @nogc
  //   version (X86)
         alias double function (id self, SEL op, ...) pfobjc_msgSend_fpret;
 
+    alias double function (id self, SEL op, ...) pfobjc_msgSend_fp2ret;
+
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
     alias IMP function (Method method, IMP imp) pfmethod_setImplementation;
     alias bool function () pfNSApplicationLoad;
@@ -228,6 +230,8 @@ __gshared
 
   //  version (X86)
         pfobjc_msgSend_fpret varobjc_msgSend_fpret;
+
+    pfobjc_msgSend_fp2ret varobjc_msgSend_fp2ret;
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
     pfmethod_setImplementation method_setImplementation;
@@ -313,6 +317,7 @@ int objc_msgSend_uintret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 }
 
 // Added for convenience
+/*
 NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
     union idPoint
@@ -322,8 +327,37 @@ NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS a
     }
     idPoint idp;
     idp.id_ = objc_msgSend(theReceiver, theSelector, args);
+    import std.stdio;
+    writefln("%s", idp.id_);
     return idp.pt;
 }
+
+NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+{
+    NSPoint pt;
+    double[2] lol;
+    objc_msgSend_stret(lol.ptr, theReceiver, theSelector, args);
+    return pt;    
+}
+*/
+
+
+NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+{
+    double x, y;    
+    objc_msgSend(theReceiver, theSelector, args);
+
+    // So I looked how XCode was doing it. It's a ugly hack
+    // but at least here it works because XMM0 and XMM1 aren't touched.
+    asm
+    {
+        movsd x, XMM0;
+        movsd y, XMM1;
+    }
+    return NSPoint(x, y);
+}
+
+
 
 version (X86)
 {
