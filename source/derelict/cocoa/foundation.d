@@ -274,3 +274,82 @@ class NSAutoreleasePool : NSObject
 {
     mixin NSObjectTemplate!(NSAutoreleasePool, "NSAutoreleasePool");
 }
+
+enum : int 
+{    
+    NSFileErrorMaximum = 1023,
+    NSFileErrorMinimum = 0,
+    NSFileLockingError = 255,
+    NSFileNoSuchFileError = 4,
+    NSFileReadCorruptFileError = 259,
+    NSFileReadInapplicableStringEncodingError = 261,
+    NSFileReadInvalidFileNameError = 258,
+    NSFileReadNoPermissionError = 257,
+    NSFileReadNoSuchFileError = 260,
+    NSFileReadUnknownError = 256,
+    NSFileReadUnsupportedSchemeError = 262,
+    NSFileWriteInapplicableStringEncodingError = 517,
+    NSFileWriteInvalidFileNameError = 514,
+    NSFileWriteNoPermissionError = 513,
+    NSFileWriteOutOfSpaceError = 640,
+    NSFileWriteUnknownError = 512,
+    NSFileWriteUnsupportedSchemeError = 518,
+    NSFormattingError = 2048,
+    NSFormattingErrorMaximum = 2559,
+    NSFormattingErrorMinimum = 2048,
+    NSKeyValueValidationError = 1024,
+    NSUserCancelledError = 3072,
+    NSValidationErrorMaximum = 2047,
+    NSValidationErrorMinimum = 1024,
+
+    NSExecutableArchitectureMismatchError = 3585,
+    NSExecutableErrorMaximum = 3839,
+    NSExecutableErrorMinimum = 3584,
+    NSExecutableLinkError = 3588,
+    NSExecutableLoadError = 3587,
+    NSExecutableNotLoadableError = 3584,
+    NSExecutableRuntimeMismatchError = 3586,
+    NSFileReadTooLargeError = 263,
+    NSFileReadUnknownStringEncodingError = 264,
+
+    GSFoundationPlaceHolderError = 9999
+}
+
+class NSError : NSObject
+{
+    mixin NSObjectTemplate!(NSError, "NSError");
+
+    NSString localizedDescription()
+    {
+        id res = objc_msgSend(_id, sel!"localizedDescription");
+        return res ? new NSString(res) : null;
+    }
+}
+
+class NSBundle : NSObject
+{
+    mixin NSObjectTemplate!(NSBundle, "NSBundle");
+
+    void initWithPath(NSString path)
+    {
+        objc_msgSend(_id, sel!"initWithPath:", path._id);
+    }
+
+    bool load()
+    {
+        bool result = objc_msgSend(_id, sel!"load") != null;
+        return result;
+    }
+
+    bool unload()
+    {
+        bool result = objc_msgSend(_id, sel!"unload") != null;
+        return result;
+    }
+
+    bool loadAndReturnError(NSError error)
+    {
+        bool result = objc_msgSend(_id, sel!"loadAndReturnError:", error._id) != null;
+        return result;
+    }
+}
