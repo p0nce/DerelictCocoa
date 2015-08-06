@@ -5,9 +5,8 @@ DerelictCocoa [![Build Status](https://travis-ci.org/p0nce/DerelictCocoa.png?bra
 
 A dynamic binding to [Cocoa](https://en.wikipedia.org/wiki/Cocoa_(API)) for the D Programming Language. **This binding is incomplete. Use PR to add more stuff.**
 
-For information on how to build DerelictCocoa and link it with your programs, please see the post [Using Derelict](http://dblog.aldacron.net/derelict-help/using-derelict/) at The One With D.
+Please see the pages [Building and Linking Derelict](http://derelictorg.github.io/compiling.html) and [Using Derelict](http://derelictorg.github.io/using.html), or information on how to build DerelictCocoa and load the Cocoa library at run time. In the meantime, here's some sample code.
 
-For information on how to load the Cocoa framework via DerelictCocoa, see the page [DerelictUtil for Users](https://github.com/DerelictOrg/DerelictUtil/wiki/DerelictUtil-for-Users) at the DerelictUtil Wiki. In the meantime, here's some sample code.
 
 ```D
 void main(string[] args)
