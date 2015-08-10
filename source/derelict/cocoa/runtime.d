@@ -407,3 +407,13 @@ id lazyClass(string className)()
     return cached;
 }
 
+// @encode replacement
+template encode(T)
+{
+    static if (is(T == int))
+        enum encode = "i";
+    else static if (is(T == NSRect))
+    {
+        enum encode = "{_NSRect={_NSPoint=dd}{_NSSize=dd}}";
+    }
+}

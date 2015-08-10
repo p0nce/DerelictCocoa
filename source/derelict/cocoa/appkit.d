@@ -215,9 +215,30 @@ enum : NSBorderType
    NSGrooveBorder = 3
 }
 
-class NSView : NSObject
+class NSView : NSResponder
 {
     mixin NSObjectTemplate!(NSView, "NSView");
+
+    void initWithFrame(NSRect rect)
+    {
+        objc_msgSend(_id, sel!"initWithFrame:", rect);
+    }
+
+    void addSubview(NSView subView)
+    {
+        objc_msgSend(_id, sel!"addSubview:", subView._id);
+    }
+
+    void removeFromSuperview()
+    {
+        objc_msgSend(_id, sel!"removeFromSuperview");
+    }
+
+    NSWindow window()
+    {
+        id result = objc_msgSend(_id, sel!"window");
+        return result ? new NSWindow(result) : null;
+    }
 }
 
 
@@ -264,6 +285,12 @@ class NSWindow : NSResponder
     void makeKeyAndOrderFront()
     {
         objc_msgSend(_id, sel!"makeKeyAndOrderFront:");
+    }
+
+    bool makeFirstResponder(NSResponder responder)
+    {
+        BOOL result = cast(BOOL) objc_msgSend(_id, sel!"makeFirstResponder:", responder._id);
+        return result != NO;
     }
 
     NSEvent nextEventMatchingMask(NSUInteger eventMask)
