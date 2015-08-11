@@ -127,13 +127,32 @@ class NSObject
         objc_msgSend(_id, sel!"release");
     }
 }
+
+class NSData : NSObject
+{
+    mixin NSObjectTemplate!(NSData, "NSData");
+
+    static NSData data()
+    {
+        id result = objc_msgSend(getClassID(), sel!"data");
+        return result !is null ? new NSData(result) : null;
+    }
+
+    static NSData dataWithBytesNoCopy(void* bytes, NSUInteger length, bool freeWhenDone)
+    {
+        id result = objc_msgSend(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:", 
+            bytes, length, freeWhenDone ? YES : NO);
+        return result !is null ? new NSData(result) : null;        
+    }
+}
+
 class NSString : NSObject
 {
     mixin NSObjectTemplate!(NSString, "NSString");
 
     static NSString stringWith (string str)
     {
-        id result = objc_msgSend(lazyClass!"NSString", sel!"stringWithCharacters:length:", str.toUTF16z(), str.length);
+        id result = objc_msgSend(getClassID(), sel!"stringWithCharacters:length:", str.toUTF16z(), str.length);
         return result !is null ? new NSString(result) : null;
     }
 

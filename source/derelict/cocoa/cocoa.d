@@ -38,6 +38,7 @@ import derelict.util.loader;
 
 import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
+import derelict.cocoa.appkit;
 
 static if(Derelict_OS_Mac)
     enum libNames = "/System/Library/Frameworks/Cocoa.framework/Cocoa";
@@ -73,12 +74,13 @@ class DerelictCocoaLoader : SharedLibLoader
           /*  version(X86)*/ bindFunc(cast(void**)&varobjc_msgSend_fpret, "objc_msgSend_fpret");
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
-            bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
 
             // Foundation
             bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
             bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
 
+            // Appkit
+            bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
         }
     }
 }

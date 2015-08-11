@@ -37,6 +37,19 @@ import std.string;
 
 import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
+import derelict.cocoa.coreimage;
+
+
+// free functions
+extern (C) nothrow @nogc
+{
+    alias bool function() pfNSApplicationLoad;
+}
+
+__gshared
+{
+    pfNSApplicationLoad NSApplicationLoad;
+}
 
 alias NSApplicationActivationPolicy = NSInteger;
 enum : NSApplicationActivationPolicy
@@ -578,5 +591,37 @@ class NSEvent : NSObject
     uint keyCode()
     {
         return objc_msgSend_uintret(_id, sel!"keyCode");
+    }
+}
+
+class NSGraphicsContext : NSObject
+{
+    mixin NSObjectTemplate!(NSGraphicsContext, "NSGraphicsContext");
+
+    static NSGraphicsContext currentContext()
+    {
+        id result = objc_msgSend(getClassID(), sel!"currentContext");
+        return result ? new NSGraphicsContext(result) : null;
+    }
+
+    void saveGraphicsState()
+    {
+        objc_msgSend(_id, sel!"saveGraphicsState");
+    }
+    
+    void restoreGraphicsState()
+    {
+        objc_msgSend(_id, sel!"restoreGraphicsState");
+    }
+
+    bool flipped()
+    {
+        return cast(bool) objc_msgSend(_id, sel!"flipped");
+    }
+
+    CIContext getCIContext()
+    {
+        id result = objc_msgSend(_id, sel!"CIContext");
+        return result ? new CIContext(result) : null;
     }
 }

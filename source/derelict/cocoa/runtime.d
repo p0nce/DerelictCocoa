@@ -204,8 +204,7 @@ extern (C) nothrow @nogc
     alias double function (id self, SEL op, ...) pfobjc_msgSend_fp2ret;
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
-    alias IMP function (Method method, IMP imp) pfmethod_setImplementation;
-    alias bool function () pfNSApplicationLoad;
+    alias IMP function (Method method, IMP imp) pfmethod_setImplementation;    
 }
 
 __gshared
@@ -231,8 +230,7 @@ __gshared
     pfobjc_msgSend_fp2ret varobjc_msgSend_fp2ret;
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
-    pfmethod_setImplementation method_setImplementation;
-    pfNSApplicationLoad NSApplicationLoad;
+    pfmethod_setImplementation method_setImplementation;    
 }
 
 bool class_addIvar (Class cls, string name, size_t size, byte alignment, string types)

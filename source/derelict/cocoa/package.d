@@ -41,5 +41,7 @@ public import derelict.cocoa.runtime;
 public import derelict.cocoa.foundation;
 public import derelict.cocoa.cocoa;
 public import derelict.cocoa.appkit;
+public import derelict.cocoa.coregraphics;
+public import derelict.cocoa.coreimage;
 
 
