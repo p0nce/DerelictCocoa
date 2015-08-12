@@ -40,6 +40,7 @@ alias CGPoint = NSPoint;
 alias CGSize = NSSize;
 alias CGRect = NSRect;
 
+alias CGMakeRect = NSMakeRect;
 
 CGRect NSRectToCGRect(NSRect rect) pure nothrow @nogc
 {
@@ -50,3 +51,5 @@ NSRect CGRectToNSRect(CGRect rect) pure nothrow @nogc
 {
     return rect;
 }
+
+alias CGColorSpaceRef = void*;

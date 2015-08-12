@@ -47,12 +47,20 @@ extern (C) nothrow @nogc
 {
     alias void* function(NSUInteger bytes) pfNSAllocateMemoryPages;
     alias void function (void* ptr, NSUInteger bytes) pfNSDeallocateMemoryPages;
+    alias void function(id format, ...) pfNSLog;
 }
 
 __gshared
 {
     pfNSDeallocateMemoryPages NSDeallocateMemoryPages;
     pfNSAllocateMemoryPages NSAllocateMemoryPages;
+    pfNSLog NSLog;
+}
+
+__gshared
+{
+    NSString NSDefaultRunLoopMode;
+    NSString NSRunLoopCommonModes;
 }
 
 id toID(NSObject object)
@@ -372,3 +380,32 @@ class NSBundle : NSObject
         return result;
     }
 }
+
+class NSTimer : NSObject
+{
+    mixin NSObjectTemplate!(NSTimer, "NSTimer");
+
+    static NSTimer timerWithTimeInterval(double seconds, NSObject target, SEL selector, void* userInfo, bool repeats)
+    {
+        id result = objc_msgSend(getClassID(), sel!"timerWithTimeInterval:target:selector:userInfo:repeats:",
+                    seconds, target._id, selector, cast(id)userInfo, repeats ? YES : NO);
+        return result !is null ? new NSTimer(result) : null;
+    }
+}
+
+class NSRunLoop : NSObject
+{
+    mixin NSObjectTemplate!(NSRunLoop, "NSRunLoop");
+
+    static NSRunLoop currentRunLoop()
+    {
+        id result = objc_msgSend(getClassID(), sel!"currentRunLoop");
+        return result !is null ? new NSRunLoop(result) : null;
+    }
+
+    void addTimer(NSTimer aTimer, NSString forMode)
+    {
+        objc_msgSend(_id, sel!"addTimer:forMode:", aTimer._id, forMode._id);
+    }
+}
+

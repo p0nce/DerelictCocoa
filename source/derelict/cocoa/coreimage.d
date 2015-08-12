@@ -37,6 +37,7 @@ import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
 import derelict.cocoa.coregraphics;
 
+
 class CIContext : NSObject
 {
     mixin NSObjectTemplate!(CIContext, "CIContext");
@@ -47,7 +48,25 @@ class CIContext : NSObject
     }
 }
 
+alias CIFormat = int;
+
+extern(C)
+{
+    __gshared CIFormat kCIFormatARGB8;
+    __gshared CIFormat kCIFormatRGBA16;
+    __gshared CIFormat kCIFormatRGBAf;
+    __gshared CIFormat kCIFormatRGBAh;
+}
+
 class CIImage : NSObject
 {
     mixin NSObjectTemplate!(CIImage, "CIImage");
+
+    static CIImage imageWithBitmapData(NSData d, size_t bytesPerRow, CGSize size, CIFormat f, CGColorSpaceRef cs)
+    {
+        id result = objc_msgSend(getClassID(), 
+                                 sel!"imageWithBitmapData:bytesPerRow:size:format:colorSpace:",
+                                 d, bytesPerRow, size, f, cs);
+        return result !is null ? new CIImage(result) : null;
+    }
 }

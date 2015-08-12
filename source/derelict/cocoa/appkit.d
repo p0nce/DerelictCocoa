@@ -252,6 +252,11 @@ class NSView : NSResponder
         id result = objc_msgSend(_id, sel!"window");
         return result ? new NSWindow(result) : null;
     }
+
+    void setNeedsDisplayInRect(NSRect rect)
+    {
+        objc_msgSend(_id, sel!"setNeedsDisplayInRect:", rect);
+    }
 }
 
 
