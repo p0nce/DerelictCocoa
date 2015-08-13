@@ -391,6 +391,11 @@ class NSTimer : NSObject
                     seconds, target._id, selector, cast(id)userInfo, repeats ? YES : NO);
         return result !is null ? new NSTimer(result) : null;
     }
+
+    void invalidate()
+    {
+        objc_msgSend(_id, sel!"invalidate");
+    }
 }
 
 class NSRunLoop : NSObject
