@@ -53,6 +53,8 @@ alias CIFormat = int;
 extern(C)
 {
     __gshared CIFormat kCIFormatARGB8;
+    //__gshared CIFormat kCIFormatBGRA8; // iOS only
+    //__gshared CIFormat kCIFormatRGBA8; // iOS only
     __gshared CIFormat kCIFormatRGBA16;
     __gshared CIFormat kCIFormatRGBAf;
     __gshared CIFormat kCIFormatRGBAh;
@@ -66,7 +68,7 @@ class CIImage : NSObject
     {
         id result = objc_msgSend(getClassID(), 
                                  sel!"imageWithBitmapData:bytesPerRow:size:format:colorSpace:",
-                                 d, bytesPerRow, size, f, cs);
+                                 d._id, bytesPerRow, size, f, cs);
         return result !is null ? new CIImage(result) : null;
     }
 }

@@ -39,6 +39,7 @@ import derelict.util.loader;
 import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
 import derelict.cocoa.appkit;
+import derelict.cocoa.coreimage;
 
 static if(Derelict_OS_Mac)
     enum libNames = "/System/Library/Frameworks/Cocoa.framework/Cocoa";
@@ -79,9 +80,20 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&NSLog, "NSLog");
             bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
             bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
+            
+            // TODO: load from proper global variables
+            NSDefaultRunLoopMode = NSString.stringWith("kCFRunLoopDefaultMode");
+            NSRunLoopCommonModes = NSString.stringWith("kCFRunLoopCommonModes");
 
             // Appkit
             bindFunc(cast(void**)&NSApplicationLoad, "NSApplicationLoad");
+
+            // Core Image
+            // TODO load from proper global variables
+            kCIFormatARGB8 = 23;
+            kCIFormatRGBA16 = 27;
+            kCIFormatRGBAf = 34;
+            kCIFormatRGBAh = 31;
         }
     }
 }
