@@ -566,11 +566,6 @@ enum : ushort
   kVK_JIS_Kana                  = 0x68
 }
 
-extern (C) nothrow @nogc
-{
-    alias NSPoint function (id rec, const(SEL) sel) pf_locationInWindow;
-}
-
 class NSEvent : NSObject
 {
     mixin NSObjectTemplate!(NSEvent, "NSEvent");
@@ -623,14 +618,18 @@ class NSEvent : NSObject
         return objc_msgSend_uintret(_id, sel!"keyCode");
     }
 
+    extern (C) nothrow @nogc
+        {
+            alias NSPoint function (id rec, const(SEL) sel) pf_locationInWindow;
+        }    
+
     NSPoint locationInWindow()
     {
-        SEL sel = sel!"locationInWindow";
-        asm { int 3; }
-        return ( cast(pf_locationInWindow)(varobjc_msgSend) )( _id, sel);
-
+        //SEL sel = sel!"locationInWindow";
+        //return ( cast(pf_locationInWindow)(varobjc_msgSend) )(_id, sel);
+        
         //locationInWindow
-        //return objc_msgSend_NSPointret(_id, sel!"locationInWindow");
+        return objc_msgSend_NSPointret(_id, sel!"locationInWindow");
     }
 }
 

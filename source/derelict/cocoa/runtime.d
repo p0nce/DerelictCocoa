@@ -324,23 +324,10 @@ NSRect objc_msgSend_NSRectret(ARGS...)(id theReceiver, SEL theSelector, ARGS arg
 
 NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
-  //  return NSPoint(0, 0);    
-/*    auto fun = cast(pfobjc_msgSend_NSPointret)varobjc_msgSend;
+    // it looks like variadic calls are OK after all
+    auto fun = cast(pfobjc_msgSend_NSPointret)varobjc_msgSend;
     return fun(theReceiver, theSelector, args);
-*/
-    double x, y;    
-    objc_msgSend(theReceiver, theSelector, args);
-
-    // So I looked how XCode was doing it. It's a ugly hack
-    // but at least here it works because XMM0 and XMM1 aren't touched.
-    asm
-    {
-        movsd x, XMM0;
-        movsd y, XMM1;
-    }
-    return NSPoint(x, y);
 }
-
 
 
 version (X86)
