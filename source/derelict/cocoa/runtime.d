@@ -205,6 +205,10 @@ extern (C) nothrow @nogc
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
     alias IMP function (Method method, IMP imp) pfmethod_setImplementation;    
+
+
+    // like pfobjc_msgSend except for returning NSPoint
+    alias NSPoint function (id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend_NSPointret;
 }
 
 __gshared
@@ -311,34 +315,19 @@ int objc_msgSend_uintret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
     return cast(uint)( cast(NSUInteger)( objc_msgSend(theReceiver, theSelector, args) ) );
 }
 
-// Added for convenience
-/*
-NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
+NSRect objc_msgSend_NSRectret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
-    union idPoint
-    {
-        id id_;
-        NSPoint pt;
-    }
-    idPoint idp;
-    idp.id_ = objc_msgSend(theReceiver, theSelector, args);
-    import std.stdio;
-    writefln("%s", idp.id_);
-    return idp.pt;
+    NSRect rect;
+    objc_msgSend_stret(&rect, theReceiver, theSelector, args);
+    return rect;
 }
 
 NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
-    NSPoint pt;
-    double[2] lol;
-    objc_msgSend_stret(lol.ptr, theReceiver, theSelector, args);
-    return pt;    
-}
+  //  return NSPoint(0, 0);    
+/*    auto fun = cast(pfobjc_msgSend_NSPointret)varobjc_msgSend;
+    return fun(theReceiver, theSelector, args);
 */
-
-
-NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
     double x, y;    
     objc_msgSend(theReceiver, theSelector, args);
 

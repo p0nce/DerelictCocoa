@@ -257,6 +257,26 @@ class NSView : NSResponder
     {
         objc_msgSend(_id, sel!"setNeedsDisplayInRect:", rect);
     }
+
+    NSPoint convertPoint(NSPoint point, NSView view)
+    {
+        return objc_msgSend_NSPointret(_id, sel!"convertPoint:fromView:", point, view !is null ? view._id : null);
+    }
+
+    NSRect convertRect(NSRect rect, NSView view)
+    {
+        return objc_msgSend_NSRectret(_id, sel!"frame", rect, view !is null ? view._id : null);
+    }
+
+    NSRect frame(NSPoint point, NSView view)
+    {
+        return objc_msgSend_NSRectret(_id, sel!"frame");
+    }
+
+    NSRect bounds(NSPoint point, NSView view)
+    {
+        return objc_msgSend_NSRectret(_id, sel!"bounds");
+    }
 }
 
 
@@ -546,6 +566,11 @@ enum : ushort
   kVK_JIS_Kana                  = 0x68
 }
 
+extern (C) nothrow @nogc
+{
+    alias NSPoint function (id rec, const(SEL) sel) pf_locationInWindow;
+}
+
 class NSEvent : NSObject
 {
     mixin NSObjectTemplate!(NSEvent, "NSEvent");
@@ -596,6 +621,16 @@ class NSEvent : NSObject
     uint keyCode()
     {
         return objc_msgSend_uintret(_id, sel!"keyCode");
+    }
+
+    NSPoint locationInWindow()
+    {
+        SEL sel = sel!"locationInWindow";
+        asm { int 3; }
+        return ( cast(pf_locationInWindow)(varobjc_msgSend) )( _id, sel);
+
+        //locationInWindow
+        //return objc_msgSend_NSPointret(_id, sel!"locationInWindow");
     }
 }
 
