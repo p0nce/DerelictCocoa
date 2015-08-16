@@ -66,7 +66,7 @@ class CIImage : NSObject
 
     static CIImage imageWithBitmapData(NSData d, size_t bytesPerRow, CGSize size, CIFormat f, CGColorSpaceRef cs)
     {
-        id result = objc_msgSend(getClassID(), 
+        id result = objc_msgSend(getClassID(),
                                  sel!"imageWithBitmapData:bytesPerRow:size:format:colorSpace:",
                                  d._id, bytesPerRow, size, f, cs);
         return result !is null ? new CIImage(result) : null;

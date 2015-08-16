@@ -80,7 +80,7 @@ mixin template NSObjectTemplate(T, string className)
     {
         id myClass = getClassID();
         this( objc_msgSend(myClass, sel!"alloc") );
-        init(); // call init                
+        init(); // call init
     }
 
     // create from an id
@@ -112,7 +112,7 @@ class NSObject
     id _id = null;
 
     mixin NSObjectTemplate!(NSObject, "NSObject");
-    
+
     static void poseAsClass (Class aClass)
     {
         objc_msgSend(lazyClass!"NSObject", sel!"poseAsClass:", aClass);
@@ -120,8 +120,7 @@ class NSObject
 
     ~this()
     {
-        // once the GC release this, call release
-        release();
+        // do not call release here.
     }
 
     final NSObject init ()
@@ -148,9 +147,9 @@ class NSData : NSObject
 
     static NSData dataWithBytesNoCopy(void* bytes, NSUInteger length, bool freeWhenDone)
     {
-        id result = objc_msgSend(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:", 
+        id result = objc_msgSend(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:",
             bytes, length, freeWhenDone ? YES : NO);
-        return result !is null ? new NSData(result) : null;        
+        return result !is null ? new NSData(result) : null;
     }
 }
 
@@ -302,8 +301,8 @@ class NSAutoreleasePool : NSObject
     mixin NSObjectTemplate!(NSAutoreleasePool, "NSAutoreleasePool");
 }
 
-enum : int 
-{    
+enum : int
+{
     NSFileErrorMaximum = 1023,
     NSFileErrorMinimum = 0,
     NSFileLockingError = 255,
