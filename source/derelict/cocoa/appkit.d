@@ -38,6 +38,7 @@ import std.string;
 import derelict.cocoa.runtime;
 import derelict.cocoa.foundation;
 import derelict.cocoa.coreimage;
+import derelict.cocoa.coregraphics;
 
 
 // free functions
@@ -687,5 +688,24 @@ struct NSGraphicsContext
     {
         id result = objc_msgSend(_id, sel!"CIContext");
         return CIContext(result);
+    }
+}
+
+struct NSColorSpace
+{
+    NSObject parent;
+    alias parent this;
+
+    mixin NSObjectTemplate!(NSColorSpace, "NSColorSpace");
+
+    static NSColorSpace sRGBColorSpace()
+    {
+        return NSColorSpace(objc_msgSend(getClassID(), sel!"sRGBColorSpace"));
+    }
+
+    // Should the NSColorSpace outlive the returned reference? Documentation says nothing.
+    CGColorSpaceRef CGColorSpace()
+    {
+        return cast(CGColorSpaceRef) objc_msgSend(_id, sel!"CGColorSpace");
     }
 }

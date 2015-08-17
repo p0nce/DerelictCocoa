@@ -204,7 +204,7 @@ extern (C) nothrow @nogc
     alias double function (id self, SEL op, ...) pfobjc_msgSend_fp2ret;
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
-    alias IMP function (Method method, IMP imp) pfmethod_setImplementation;    
+    alias IMP function (Method method, IMP imp) pfmethod_setImplementation;
 
 
     // like pfobjc_msgSend except for returning NSPoint
@@ -234,7 +234,7 @@ __gshared
     pfobjc_msgSend_fp2ret varobjc_msgSend_fp2ret;
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
-    pfmethod_setImplementation method_setImplementation;    
+    pfmethod_setImplementation method_setImplementation;
 }
 
 bool class_addIvar (Class cls, string name, size_t size, byte alignment, string types)
@@ -285,7 +285,7 @@ Ivar object_setInstanceVariable (id obj, string name, void* value)
 
 SEL sel_registerName (string str)
 {
-    return varsel_registerName(str.ptr);    
+    return varsel_registerName(str.ptr);
 }
 
 id objc_msgSend (ARGS...)(id theReceiver, SEL theSelector, ARGS args)
@@ -343,7 +343,7 @@ else
     {
         // Strange, it isn't supposed to be work with varobjc_msgSend_fpret.
         // This really shouldn't work, I don't understand.
-        double result = varobjc_msgSend_fpret(self, theSelector, args);    
+        double result = varobjc_msgSend_fpret(self, theSelector, args);
         return result;
     }
 }
@@ -358,12 +358,12 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
 // Not thread-safe!
 SEL sel(string selectorName)()
 {
-    __gshared SEL cached = null;
+    static SEL cached = null; // cached is TLS
 
     if (cached is null)
     {
         cached = sel_registerName(selectorName);
-    }       
+    }
     return cached;
 }
 
@@ -372,12 +372,12 @@ SEL sel(string selectorName)()
 // Not thread-safe!
 id lazyClass(string className)()
 {
-    __gshared id cached = null;
+    static id cached = null; // cached is TLS
 
     if (cached is null)
     {
         cached = objc_getClass(className);
-    }       
+    }
     return cached;
 }
 
