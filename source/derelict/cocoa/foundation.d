@@ -63,6 +63,8 @@ __gshared
     NSString NSRunLoopCommonModes;
 }
 
+alias NSTimeInterval = double;
+
 
 // Mixin'd by all Cocoa objects
 mixin template NSObjectTemplate(T, string className)
@@ -444,4 +446,24 @@ struct NSRunLoop
         objc_msgSend(_id, sel!"addTimer:forMode:", aTimer._id, forMode._id);
     }
 }
+
+struct NSDate
+{
+    NSObject parent;
+    alias parent this;
+
+    mixin NSObjectTemplate!(NSDate, "NSDate");
+
+    static NSDate date()
+    {
+        return NSDate(objc_msgSend(getClassID(), sel!"date"));
+    }
+
+    static NSTimeInterval timeIntervalSinceReferenceDate()
+    {
+        return objc_msgSend_fpret(getClassID(), sel!"timeIntervalSinceReferenceDate");
+    }
+}
+
+
 
