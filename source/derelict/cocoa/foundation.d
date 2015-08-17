@@ -63,37 +63,29 @@ __gshared
     NSString NSRunLoopCommonModes;
 }
 
-id toID(NSObject object)
-{
-    if (object is null)
-        return null;
-    else
-        return object._id;
-}
 
 // Mixin'd by all Cocoa objects
 mixin template NSObjectTemplate(T, string className)
 {
     /// Create a new object on the GC heap
     /// And calls init on it.
-    this()
+    /*this()
     {
         id myClass = getClassID();
         this( objc_msgSend(myClass, sel!"alloc") );
         init(); // call init
-    }
+    }*/
 
     // create from an id
     this (id id_)
     {
-        assert(id_ !is null); // use null instead of NSObject containing null
         this._id = id_;
     }
 
     /// Allocates, but do not init
     static T alloc()
     {
-        return new T( objc_msgSend(getClassID(), sel!"alloc") );
+        return T( objc_msgSend(getClassID(), sel!"alloc") );
     }
 
     static Class getClass()
@@ -107,60 +99,70 @@ mixin template NSObjectTemplate(T, string className)
     }
 }
 
-class NSObject
+struct NSObject
 {
+    // The only field available in all NSObject hierarchy
+    // That makes all these dstructs idempotent with an id,
+    // and the size of a pointer.
     id _id = null;
 
-    mixin NSObjectTemplate!(NSObject, "NSObject");
-
-    static void poseAsClass (Class aClass)
+    // Subtype id
+    bool opCast()
     {
-        objc_msgSend(lazyClass!"NSObject", sel!"poseAsClass:", aClass);
+        return _id != null;
     }
+
+    mixin NSObjectTemplate!(NSObject, "NSObject");
 
     ~this()
     {
         // do not call release here.
     }
 
-    final NSObject init ()
+    NSObject init ()
     {
         id result = objc_msgSend(_id, sel!"init");
-        return result ? this : null;
+        return NSObject(result);
     }
 
-    final void release ()
+    void release ()
     {
         objc_msgSend(_id, sel!"release");
     }
 }
 
-class NSData : NSObject
+struct NSData
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSData, "NSData");
 
     static NSData data()
     {
         id result = objc_msgSend(getClassID(), sel!"data");
-        return result !is null ? new NSData(result) : null;
+        return NSData(result);
     }
 
     static NSData dataWithBytesNoCopy(void* bytes, NSUInteger length, bool freeWhenDone)
     {
         id result = objc_msgSend(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:",
             bytes, length, freeWhenDone ? YES : NO);
-        return result !is null ? new NSData(result) : null;
+        return NSData(result);
     }
 }
 
-class NSString : NSObject
+struct NSString
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSString, "NSString");
 
     static NSString stringWith (string str)
     {
         id result = objc_msgSend(getClassID(), sel!"stringWithCharacters:length:", str.toUTF16z(), str.length);
-        return result !is null ? new NSString(result) : null;
+        return NSString(result);
     }
 
     static NSString opAssign (string str)
@@ -168,7 +170,7 @@ class NSString : NSObject
         return stringWith(str);
     }
 
-    override string toString()
+    string toString()
     {
         return fromStringz(UTF8String()).idup;
     }
@@ -178,9 +180,9 @@ class NSString : NSObject
         return cast(NSUInteger) objc_msgSend(_id, sel!"length");
     }
 
-    /*const*/ char* UTF8String ()
+    char* UTF8String ()
     {
-        return cast(/*const*/ char*) objc_msgSend(_id, sel!"UTF8String");
+        return cast(char*) objc_msgSend(_id, sel!"UTF8String");
     }
 
     void getCharacters (wchar* buffer, NSRange range)
@@ -188,21 +190,21 @@ class NSString : NSObject
         objc_msgSend(_id, sel!"getCharacters:range:", buffer, range);
     }
 
-    NSString stringWithCharacters (/*const*/ wchar* chars, NSUInteger length)
+    NSString stringWithCharacters (wchar* chars, NSUInteger length)
     {
         id result = objc_msgSend(_id, sel!"stringWithCharacters:length:", chars, length);
-        return result ? new NSString(result) : null;
+        return NSString(result);
     }
 
     NSRange rangeOfString (NSString aString)
     {
-        return *cast(NSRange*) objc_msgSend(_id, sel!"rangeOfString", aString.toID);
+        return *cast(NSRange*) objc_msgSend(_id, sel!"rangeOfString", aString._id);
     }
 
     NSString stringByAppendingString (NSString aString)
     {
-        id result = objc_msgSend(_id, sel!"stringByAppendingString:", aString.toID);
-        return result ? new NSString(result) : null;
+        id result = objc_msgSend(_id, sel!"stringByAppendingString:", aString._id);
+        return NSString(result);
     }
 
     NSString stringByReplacingRange (NSRange aRange, NSString str)
@@ -241,8 +243,11 @@ class NSString : NSObject
     }
 }
 
-class NSEnumerator : NSObject
+struct NSEnumerator
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSEnumerator, "NSEnumerator");
 
     id nextObject ()
@@ -251,42 +256,54 @@ class NSEnumerator : NSObject
     }
 }
 
-class NSArray : NSObject
+struct NSArray
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSArray, "NSArray");
 
     NSEnumerator objectEnumerator ()
     {
         id result = objc_msgSend(_id, sel!"objectEnumerator");
-        return result ? new NSEnumerator(result) : null;
+        return NSEnumerator(result);
     }
 }
 
 
-class NSProcessInfo : NSObject
+struct NSProcessInfo
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSProcessInfo, "NSProcessInfo");
 
     static NSProcessInfo processInfo ()
     {
         id result = objc_msgSend(lazyClass!"NSProcessInfo", sel!"processInfo");
-        return result ? new NSProcessInfo(result) : null;
+        return NSProcessInfo(result);
     }
 
     NSString processName ()
     {
         id result = objc_msgSend(_id, sel!"processName");
-        return result ? new NSString(result) : null;
+        return NSString(result);
     }
 }
 
-class NSNotification : NSObject
+struct NSNotification
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSNotification, "NSNotification");
 }
 
-class NSDictionary : NSObject
+struct NSDictionary
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSDictionary, "NSDictionary");
 
     id objectForKey(id key)
@@ -296,8 +313,11 @@ class NSDictionary : NSObject
     }
 }
 
-class NSAutoreleasePool : NSObject
+struct NSAutoreleasePool
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSAutoreleasePool, "NSAutoreleasePool");
 }
 
@@ -341,19 +361,25 @@ enum : int
     GSFoundationPlaceHolderError = 9999
 }
 
-class NSError : NSObject
+struct NSError
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSError, "NSError");
 
     NSString localizedDescription()
     {
         id res = objc_msgSend(_id, sel!"localizedDescription");
-        return res ? new NSString(res) : null;
+        return NSString(res);
     }
 }
 
-class NSBundle : NSObject
+struct NSBundle
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSBundle, "NSBundle");
 
     void initWithPath(NSString path)
@@ -380,15 +406,18 @@ class NSBundle : NSObject
     }
 }
 
-class NSTimer : NSObject
+struct NSTimer
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSTimer, "NSTimer");
 
     static NSTimer timerWithTimeInterval(double seconds, NSObject target, SEL selector, void* userInfo, bool repeats)
     {
         id result = objc_msgSend(getClassID(), sel!"timerWithTimeInterval:target:selector:userInfo:repeats:",
                     seconds, target._id, selector, cast(id)userInfo, repeats ? YES : NO);
-        return result !is null ? new NSTimer(result) : null;
+        return NSTimer(result);
     }
 
     void invalidate()
@@ -397,14 +426,17 @@ class NSTimer : NSObject
     }
 }
 
-class NSRunLoop : NSObject
+struct NSRunLoop
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSRunLoop, "NSRunLoop");
 
     static NSRunLoop currentRunLoop()
     {
         id result = objc_msgSend(getClassID(), sel!"currentRunLoop");
-        return result !is null ? new NSRunLoop(result) : null;
+        return NSRunLoop(result);
     }
 
     void addTimer(NSTimer aTimer, NSString forMode)

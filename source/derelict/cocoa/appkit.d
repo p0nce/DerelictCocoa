@@ -56,38 +56,41 @@ enum : NSApplicationActivationPolicy
 {
    NSApplicationActivationPolicyRegular = 0,
    NSApplicationActivationPolicyAccessory = 1,
-   NSApplicationActivationPolicyProhibited = 2 
+   NSApplicationActivationPolicyProhibited = 2
 }
 
-class NSApplication : NSObject
+struct NSApplication
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSApplication, "NSApplication");
 
     public static NSApplication sharedApplication ()
     {
         id result = objc_msgSend(lazyClass!"NSApplication", sel!"sharedApplication");
-        return result ? new NSApplication(result) : null;
+        return NSApplication(result);
     }
 
     NSMenu mainMenu ()
     {
         id result = objc_msgSend(_id, sel!"mainMenu");
-        return result ? new NSMenu(result) : null;
+        return NSMenu(result);
     }
 
     void setAppleMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setAppleMenu:", menu.toID);
+        objc_msgSend(_id, sel!"setAppleMenu:", menu._id);
     }
 
     void setWindowsMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setWindowsMenu:", menu.toID);
+        objc_msgSend(_id, sel!"setWindowsMenu:", menu._id);
     }
 
     void setMainMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setMainMenu:", menu.toID);
+        objc_msgSend(_id, sel!"setMainMenu:", menu._id);
     }
 
     void setDelegate (id object)
@@ -116,31 +119,34 @@ class NSApplication : NSObject
     }
 }
 
-class NSMenu : NSObject
+struct NSMenu
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSMenu, "NSMenu");
 
     NSString title ()
     {
         id result = objc_msgSend(_id, sel!"title");
-        return result ? new NSString(result) : null;
+        return NSString(result);
     }
 
     NSMenu initWithTitle (NSString aTitle)
     {
-        id result = objc_msgSend(_id, sel!"initWithTitle:", aTitle.toID);
-        return result ? new NSMenu(result) : null;
+        id result = objc_msgSend(_id, sel!"initWithTitle:", aTitle._id);
+        return NSMenu(result);
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(_id, sel!"setTitle:", str.toID);
+        objc_msgSend(_id, sel!"setTitle:", str._id);
     }
 
     NSArray itemArray ()
     {
         id result = objc_msgSend(_id, sel!"itemArray");
-        return result ? new NSArray(result) : null;
+        return NSArray(result);
     }
 
     void sizeToFit ()
@@ -150,41 +156,45 @@ class NSMenu : NSObject
 
     NSMenuItem addItemWithTitle (NSString str, string selector, NSString keyEquiv)
     {
-        id result = objc_msgSend(_id, sel!"addItemWithTitle:action:keyEquivalent:", str.toID, cast(SEL) selector.ptr, keyEquiv.toID);
-        return result ? new NSMenuItem(result) : null;
+        id result = objc_msgSend(_id, sel!"addItemWithTitle:action:keyEquivalent:", str._id, cast(SEL) selector.ptr, keyEquiv._id);
+        return NSMenuItem(result);
     }
 
     void addItem (NSMenuItem newItem)
     {
-        objc_msgSend(_id, sel!"addItem:", newItem.toID);
+        objc_msgSend(_id, sel!"addItem:", newItem._id);
     }
 }
 
-class NSMenuItem : NSObject
+struct NSMenuItem
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSMenuItem, "NSMenuItem");
 
     static NSMenuItem separatorItem ()
     {
         id result = objc_msgSend(lazyClass!"NSMenuItem", sel!"separatorItem");
-        return result ? new NSMenuItem(result) : null;
+        return NSMenuItem(result);
     }
 
     NSMenuItem initWithTitle (NSString itemName, string anAction, NSString charCode)
     {
-        id result = objc_msgSend(_id, sel!"initWithTitle:action:keyEquivalent:", itemName.toID, sel_registerName(anAction), charCode.toID);
-        return result ? new NSMenuItem(result) : null;
+        id result = objc_msgSend(_id, sel!"initWithTitle:action:keyEquivalent:",
+                                 itemName._id, sel_registerName(anAction), charCode._id);
+        return NSMenuItem(result);
     }
 
     NSString title ()
     {
         id result = objc_msgSend(_id, sel!"title");
-        return result ? new NSString(result) : null;
+        return NSString(result);
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(_id, sel!"setTitle:", str.toID);
+        objc_msgSend(_id, sel!"setTitle:", str._id);
     }
 
     bool hasSubmenu ()
@@ -195,7 +205,7 @@ class NSMenuItem : NSObject
     NSMenu submenu ()
     {
         id result = objc_msgSend(_id, sel!"submenu");
-        return result ? new NSMenu(result) : null;
+        return NSMenu(result);
     }
 
     void setKeyEquivalentModifierMask (NSUInteger mask)
@@ -205,14 +215,17 @@ class NSMenuItem : NSObject
 
     void setSubmenu (NSMenu submenu)
     {
-        objc_msgSend(_id, sel!"setSubmenu:", submenu.toID);
+        objc_msgSend(_id, sel!"setSubmenu:", submenu._id);
     }
 }
 
 // NSResponder
 
-class NSResponder : NSObject
+struct NSResponder
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSResponder, "NSResponder");
 }
 
@@ -228,8 +241,11 @@ enum : NSBorderType
    NSGrooveBorder = 3
 }
 
-class NSView : NSResponder
+struct NSView
 {
+    NSResponder parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSView, "NSView");
 
     void initWithFrame(NSRect rect)
@@ -250,7 +266,7 @@ class NSView : NSResponder
     NSWindow window()
     {
         id result = objc_msgSend(_id, sel!"window");
-        return result ? new NSWindow(result) : null;
+        return NSWindow(result);
     }
 
     void setNeedsDisplayInRect(NSRect rect)
@@ -260,12 +276,12 @@ class NSView : NSResponder
 
     NSPoint convertPoint(NSPoint point, NSView view)
     {
-        return objc_msgSend_NSPointret(_id, sel!"convertPoint:fromView:", point, view !is null ? view._id : null);
+        return objc_msgSend_NSPointret(_id, sel!"convertPoint:fromView:", point, view._id);
     }
 
     NSRect convertRect(NSRect rect, NSView view)
     {
-        return objc_msgSend_NSRectret(_id, sel!"frame", rect, view !is null ? view._id : null);
+        return objc_msgSend_NSRectret(_id, sel!"frame", rect, view._id);
     }
 
     NSRect frame(NSPoint point, NSView view)
@@ -290,7 +306,7 @@ enum : NSBackingStoreType
     NSBackingStoreBuffered     = 2
 }
 
-enum : NSUInteger 
+enum : NSUInteger
 {
    NSBorderlessWindowMask = 0,
    NSTitledWindowMask = 1 << 0,
@@ -300,8 +316,11 @@ enum : NSUInteger
    NSTexturedBackgroundWindowMask = 1 << 8
 }
 
-class NSWindow : NSResponder
+struct NSWindow
 {
+    NSResponder parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSWindow, "NSWindow");
 
     void initWithContentRect(NSRect contentRect)
@@ -317,7 +336,7 @@ class NSWindow : NSResponder
     NSView contentView()
     {
         id result = objc_msgSend(_id, sel!"contentView");
-        return result ? new NSView(result) : null;
+        return NSView(result);
     }
 
     void makeKeyAndOrderFront()
@@ -334,7 +353,7 @@ class NSWindow : NSResponder
     NSEvent nextEventMatchingMask(NSUInteger eventMask)
     {
         id result = objc_msgSend(_id, sel!"nextEventMatchingMask:", eventMask);
-        return result ? new NSEvent(result) : null;        
+        return NSEvent(result);
     }
 
     NSPoint mouseLocationOutsideOfEventStream()
@@ -371,7 +390,7 @@ enum : NSEventType
     NSCursorUpdate        = 17,
     NSScrollWheel         = 22,
     NSTabletPoint         = 23,
-    NSTabletProximity     = 24,   
+    NSTabletProximity     = 24,
     NSOtherMouseDown      = 25,
     NSOtherMouseUp        = 26,
     NSOtherMouseDragged   = 27,
@@ -425,11 +444,11 @@ enum : NSUInteger
    NSNumericPadKeyMask = 1 << 21,
    NSHelpKeyMask       = 1 << 22,
    NSFunctionKeyMask   = 1 << 23,
-   NSDeviceIndependentModifierFlagsMask = 0xffff0000U 
+   NSDeviceIndependentModifierFlagsMask = 0xffff0000U
 }
 
 /// Keycodes
-enum : ushort 
+enum : ushort
 {
     kVK_ANSI_A                    = 0x00,
     kVK_ANSI_S                    = 0x01,
@@ -499,7 +518,7 @@ enum : ushort
 }
 
 /// Keycodes for keys that are independent of keyboard layout.
-enum : ushort 
+enum : ushort
 {
     kVK_Return                    = 0x24,
     kVK_Tab                       = 0x30,
@@ -551,13 +570,13 @@ enum : ushort
 }
 
 /// ISO keyboards only.
-enum : ushort 
+enum : ushort
 {
   kVK_ISO_Section               = 0x0A
 }
 
 ///JIS keyboards only.
-enum : ushort 
+enum : ushort
 {
   kVK_JIS_Yen                   = 0x5D,
   kVK_JIS_Underscore            = 0x5E,
@@ -566,14 +585,17 @@ enum : ushort
   kVK_JIS_Kana                  = 0x68
 }
 
-class NSEvent : NSObject
+struct NSEvent
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSEvent, "NSEvent");
 
     NSWindow window()
     {
         id result = objc_msgSend(_id, sel!"window");
-        return result ? new NSWindow(result) : null;
+        return NSWindow(result);
     }
 
     NSEventType type()
@@ -590,7 +612,7 @@ class NSEvent : NSObject
     int buttonNumber()
     {
         return objc_msgSend_intret(_id, sel!"buttonNumber");
-    }    
+    }
 
     uint pressedMouseButtons()
     {
@@ -621,33 +643,36 @@ class NSEvent : NSObject
     extern (C) nothrow @nogc
         {
             alias NSPoint function (id rec, const(SEL) sel) pf_locationInWindow;
-        }    
+        }
 
     NSPoint locationInWindow()
     {
         //SEL sel = sel!"locationInWindow";
         //return ( cast(pf_locationInWindow)(varobjc_msgSend) )(_id, sel);
-        
+
         //locationInWindow
         return objc_msgSend_NSPointret(_id, sel!"locationInWindow");
     }
 }
 
-class NSGraphicsContext : NSObject
+struct NSGraphicsContext
 {
+    NSObject parent;
+    alias parent this;
+
     mixin NSObjectTemplate!(NSGraphicsContext, "NSGraphicsContext");
 
     static NSGraphicsContext currentContext()
     {
         id result = objc_msgSend(getClassID(), sel!"currentContext");
-        return result ? new NSGraphicsContext(result) : null;
+        return NSGraphicsContext(result);
     }
 
     void saveGraphicsState()
     {
         objc_msgSend(_id, sel!"saveGraphicsState");
     }
-    
+
     void restoreGraphicsState()
     {
         objc_msgSend(_id, sel!"restoreGraphicsState");
@@ -661,6 +686,6 @@ class NSGraphicsContext : NSObject
     CIContext getCIContext()
     {
         id result = objc_msgSend(_id, sel!"CIContext");
-        return result ? new CIContext(result) : null;
+        return CIContext(result);
     }
 }
