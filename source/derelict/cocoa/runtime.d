@@ -288,35 +288,6 @@ SEL sel_registerName (string str)
     return varsel_registerName(str.ptr);
 }
 
-
-/*
-// Added for convenience
-int objc_msgSend_intret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
-    return cast(int)( cast(NSInteger)( objc_msgSend(theReceiver, theSelector, args) ) );
-}
-
-// Added for convenience
-int objc_msgSend_uintret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
-    return cast(uint)( cast(NSUInteger)( objc_msgSend(theReceiver, theSelector, args) ) );
-}
-
-NSRect objc_msgSend_NSRectret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
-    NSRect rect;
-    objc_msgSend_stret(&rect, theReceiver, theSelector, args);
-    return rect;
-}
-
-NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
-    // it looks like variadic calls are OK after all
-    auto fun = cast(pfobjc_msgSend_NSPointret)varobjc_msgSend;
-    return fun(theReceiver, theSelector, args);
-}
-*/
-
 Method class_getInstanceMethod (Class aClass, string aSelector)
 {
     return varclass_getInstanceMethod(aClass, aSelector.ptr);

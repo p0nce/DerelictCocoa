@@ -47,7 +47,8 @@ struct CIContext
 
     void drawImage(CIImage image, CGRect inRect, CGRect fromRect)
     {
-        objc_msgSend(_id, sel!"drawImage:inRect:fromRect:", image._id, inRect, fromRect);
+        alias fun_t = extern(C) void function (id obj, SEL sel, id, CGRect, CGRect);
+        (cast(fun_t)objc_msgSend)(_id, sel!"drawImage:inRect:fromRect:", image._id, inRect, fromRect);
     }
 }
 
@@ -72,9 +73,10 @@ struct CIImage
 
     static CIImage imageWithBitmapData(NSData d, size_t bytesPerRow, CGSize size, CIFormat f, CGColorSpaceRef cs)
     {
-        id result = objc_msgSend(getClassID(),
+        alias fun_t = extern(C) id function (id obj, SEL sel, id, NSUInteger, CGSize, CIFormat, CGColorSpaceRef);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(),
                                  sel!"imageWithBitmapData:bytesPerRow:size:format:colorSpace:",
-                                 d._id, bytesPerRow, size, f, cs);
+                                 d._id, cast(NSUInteger)bytesPerRow, size, f, cs);
         return CIImage(result);
     }
 }

@@ -69,15 +69,6 @@ alias NSTimeInterval = double;
 // Mixin'd by all Cocoa objects
 mixin template NSObjectTemplate(T, string className)
 {
-    /// Create a new object on the GC heap
-    /// And calls init on it.
-    /*this()
-    {
-        id myClass = getClassID();
-        this( objc_msgSend(myClass, sel!"alloc") );
-        init(); // call init
-    }*/
-
     // create from an id
     this (id id_)
     {
@@ -87,7 +78,8 @@ mixin template NSObjectTemplate(T, string className)
     /// Allocates, but do not init
     static T alloc()
     {
-        return T( objc_msgSend(getClassID(), sel!"alloc") );
+        alias fun_t = extern(C) id function (id obj, SEL sel);
+        return T( (cast(fun_t)objc_msgSend)(getClassID(), sel!"alloc") );
     }
 
     static Class getClass()

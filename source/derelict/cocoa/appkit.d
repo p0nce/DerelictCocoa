@@ -314,7 +314,7 @@ struct NSView
     NSRect convertRect(NSRect rect, NSView view)
     {
         alias fun_t = extern(C) NSRect function (id, const(SEL), NSRect, id);
-        return (cast(fun_t)objc_msgSend)(_id, sel!"frame", rect, view._id);
+        return (cast(fun_t)objc_msgSend_stret)(_id, sel!"convertRect:fromView:", rect, view._id);
     }
 
     NSRect frame()
