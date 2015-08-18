@@ -320,13 +320,13 @@ struct NSView
     NSRect frame()
     {
         alias fun_t = extern(C) NSRect function (id, const(SEL));
-        return (cast(fun_t)objc_msgSend)(_id, sel!"frame");
+        return (cast(fun_t)objc_msgSend_stret)(_id, sel!"frame");
     }
 
     NSRect bounds()
     {
         alias fun_t = extern(C) NSRect function (id, const(SEL));
-        return (cast(fun_t)objc_msgSend)(_id, sel!"bounds");
+        return (cast(fun_t)objc_msgSend_stret)(_id, sel!"bounds");
     }
 }
 
