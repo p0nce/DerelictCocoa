@@ -104,7 +104,7 @@ mixin template NSObjectTemplate(T, string className)
 struct NSObject
 {
     // The only field available in all NSObject hierarchy
-    // That makes all these dstructs idempotent with an id,
+    // That makes all these destructs idempotent with an id,
     // and the size of a pointer.
     id _id = null;
 
@@ -118,18 +118,25 @@ struct NSObject
 
     ~this()
     {
-        // do not call release here.
     }
 
-    NSObject init ()
+    NSObject init()
     {
-        id result = objc_msgSend(_id, sel!"init");
+        alias fun_t = extern(C) id function (id, const(SEL));
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"init");
         return NSObject(result);
     }
 
-    void release ()
+    void retain()
     {
-        objc_msgSend(_id, sel!"release");
+        alias fun_t = extern(C) void function (id, const(SEL));
+        (cast(fun_t)objc_msgSend)(_id, sel!"retain");
+    }
+
+    void release()
+    {
+        alias fun_t = extern(C) void function (id, const(SEL));
+        (cast(fun_t)objc_msgSend)(_id, sel!"release");
     }
 }
 
@@ -142,13 +149,15 @@ struct NSData
 
     static NSData data()
     {
-        id result = objc_msgSend(getClassID(), sel!"data");
+        alias fun_t = extern(C) id function (id obj, const(SEL) sel);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"data");
         return NSData(result);
     }
 
     static NSData dataWithBytesNoCopy(void* bytes, NSUInteger length, bool freeWhenDone)
     {
-        id result = objc_msgSend(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:",
+        alias fun_t = extern(C) id function(id, const(SEL), void*, NSUInteger, BOOL);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"dataWithBytesNoCopy:length:freeWhenDone:",
             bytes, length, freeWhenDone ? YES : NO);
         return NSData(result);
     }
@@ -163,13 +172,10 @@ struct NSString
 
     static NSString stringWith (string str)
     {
-        id result = objc_msgSend(getClassID(), sel!"stringWithCharacters:length:", str.toUTF16z(), str.length);
+        alias fun_t = extern(C) id function(id, SEL, const(wchar)*, NSUInteger);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"stringWithCharacters:length:",
+                                 str.toUTF16z(), cast(NSUInteger)(str.length));
         return NSString(result);
-    }
-
-    static NSString opAssign (string str)
-    {
-        return stringWith(str);
     }
 
     string toString()
@@ -177,71 +183,42 @@ struct NSString
         return fromStringz(UTF8String()).idup;
     }
 
-    NSUInteger length ()
+    size_t length ()
     {
-        return cast(NSUInteger) objc_msgSend(_id, sel!"length");
+        alias fun_t = extern(C) NSUInteger function(id, SEL);
+        return cast(size_t)( (cast(fun_t)objc_msgSend)(_id, sel!"length") );
     }
 
     char* UTF8String ()
     {
-        return cast(char*) objc_msgSend(_id, sel!"UTF8String");
+        alias fun_t = extern(C) char* function(id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"UTF8String");
     }
 
     void getCharacters (wchar* buffer, NSRange range)
     {
-        objc_msgSend(_id, sel!"getCharacters:range:", buffer, range);
+        alias fun_t = extern(C) void function(id, SEL, wchar*, NSRange);
+        (cast(fun_t)objc_msgSend)(_id, sel!"getCharacters:range:", buffer, range);
     }
 
-    NSString stringWithCharacters (wchar* chars, NSUInteger length)
+    NSString stringWithCharacters (wchar* chars, size_t length)
     {
-        id result = objc_msgSend(_id, sel!"stringWithCharacters:length:", chars, length);
+        alias fun_t = extern(C) id function(id, SEL, wchar*, NSUInteger);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"stringWithCharacters:length:", chars, cast(NSUInteger)length);
         return NSString(result);
     }
 
     NSRange rangeOfString (NSString aString)
     {
-        return *cast(NSRange*) objc_msgSend(_id, sel!"rangeOfString", aString._id);
+        alias fun_t = extern(C) NSRange function(id, SEL, id);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"rangeOfString", aString._id);
     }
 
     NSString stringByAppendingString (NSString aString)
     {
-        id result = objc_msgSend(_id, sel!"stringByAppendingString:", aString._id);
+        alias fun_t = extern(C) id function(id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"stringByAppendingString:", aString._id);
         return NSString(result);
-    }
-
-    NSString stringByReplacingRange (NSRange aRange, NSString str)
-    {
-        int bufferSize;
-        int selfLen = cast(int)this.length;
-        int aStringLen = cast(int)str.length;
-        wchar* buffer;
-        NSRange localRange;
-        NSString result;
-
-        bufferSize = selfLen + aStringLen - cast(int)aRange.length;
-        buffer = cast(wchar*) NSAllocateMemoryPages(bufferSize * wchar.sizeof);
-
-        /* Get first part into buffer */
-        localRange.location = 0;
-        localRange.length = aRange.location;
-        this.getCharacters(buffer, localRange);
-
-        /* Get middle part into buffer */
-        localRange.location = 0;
-        localRange.length = aStringLen;
-        str.getCharacters(buffer + aRange.location, localRange);
-
-        /* Get last part into buffer */
-        localRange.location = aRange.location + aRange.length;
-        localRange.length = selfLen - localRange.location;
-        this.getCharacters(buffer + aRange.location + aStringLen, localRange);
-
-        /* Build output string */
-        result = NSString.stringWithCharacters(buffer, bufferSize);
-
-        NSDeallocateMemoryPages(buffer, bufferSize);
-
-        return result;
     }
 }
 
@@ -254,7 +231,8 @@ struct NSEnumerator
 
     id nextObject ()
     {
-        return objc_msgSend(_id, sel!"nextObject");
+        alias fun_t = extern(C) id function(id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"nextObject");
     }
 }
 
@@ -267,7 +245,8 @@ struct NSArray
 
     NSEnumerator objectEnumerator ()
     {
-        id result = objc_msgSend(_id, sel!"objectEnumerator");
+        alias fun_t = extern(C) id function(id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"objectEnumerator");
         return NSEnumerator(result);
     }
 }
@@ -282,13 +261,15 @@ struct NSProcessInfo
 
     static NSProcessInfo processInfo ()
     {
-        id result = objc_msgSend(lazyClass!"NSProcessInfo", sel!"processInfo");
+        alias fun_t = extern(C) id function(id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(lazyClass!"NSProcessInfo", sel!"processInfo");
         return NSProcessInfo(result);
     }
 
     NSString processName ()
     {
-        id result = objc_msgSend(_id, sel!"processName");
+        alias fun_t = extern(C) id function(id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"processName");
         return NSString(result);
     }
 }
@@ -310,7 +291,8 @@ struct NSDictionary
 
     id objectForKey(id key)
     {
-        id result = objc_msgSend(_id, sel!"objectForKey:", key);
+        alias fun_t = extern(C) id function(id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"objectForKey:", key);
         return result;
     }
 }
@@ -372,7 +354,8 @@ struct NSError
 
     NSString localizedDescription()
     {
-        id res = objc_msgSend(_id, sel!"localizedDescription");
+        alias fun_t = extern(C) id function(id, SEL);
+        id res = (cast(fun_t)objc_msgSend)(_id, sel!"localizedDescription");
         return NSString(res);
     }
 }
@@ -386,25 +369,26 @@ struct NSBundle
 
     void initWithPath(NSString path)
     {
-        objc_msgSend(_id, sel!"initWithPath:", path._id);
+        alias fun_t = extern(C) void function(id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"initWithPath:", path._id);
     }
 
     bool load()
     {
-        bool result = objc_msgSend(_id, sel!"load") != null;
-        return result;
+        alias fun_t = extern(C) BOOL function(id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"load") != NO;
     }
 
     bool unload()
     {
-        bool result = objc_msgSend(_id, sel!"unload") != null;
-        return result;
+        alias fun_t = extern(C) BOOL function(id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"unload") != NO;
     }
 
     bool loadAndReturnError(NSError error)
     {
-        bool result = objc_msgSend(_id, sel!"loadAndReturnError:", error._id) != null;
-        return result;
+        alias fun_t = extern(C) BOOL function(id, SEL, id);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"loadAndReturnError:", error._id) != NO;
     }
 }
 
@@ -417,14 +401,16 @@ struct NSTimer
 
     static NSTimer timerWithTimeInterval(double seconds, NSObject target, SEL selector, void* userInfo, bool repeats)
     {
-        id result = objc_msgSend(getClassID(), sel!"timerWithTimeInterval:target:selector:userInfo:repeats:",
+        alias fun_t = extern(C) id function(id, SEL, double, id, SEL, id, BOOL);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"timerWithTimeInterval:target:selector:userInfo:repeats:",
                     seconds, target._id, selector, cast(id)userInfo, repeats ? YES : NO);
         return NSTimer(result);
     }
 
     void invalidate()
     {
-        objc_msgSend(_id, sel!"invalidate");
+        alias fun_t = extern(C) void function(id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"invalidate");
     }
 }
 
@@ -437,13 +423,15 @@ struct NSRunLoop
 
     static NSRunLoop currentRunLoop()
     {
-        id result = objc_msgSend(getClassID(), sel!"currentRunLoop");
+        alias fun_t = extern(C) id function(id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"currentRunLoop");
         return NSRunLoop(result);
     }
 
     void addTimer(NSTimer aTimer, NSString forMode)
     {
-        objc_msgSend(_id, sel!"addTimer:forMode:", aTimer._id, forMode._id);
+        alias fun_t = extern(C) void function(id, SEL, id, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"addTimer:forMode:", aTimer._id, forMode._id);
     }
 }
 
@@ -461,7 +449,14 @@ struct NSDate
 
     static NSTimeInterval timeIntervalSinceReferenceDate()
     {
-        return objc_msgSend_fpret(getClassID(), sel!"timeIntervalSinceReferenceDate");
+        alias fun_t = extern(C) NSTimeInterval function(id, SEL);
+
+         version(X86)
+            return (cast(fun_t)objc_msgSend_fpret)(getClassID(), sel!"timeIntervalSinceReferenceDate");
+        else version(X86_64)
+            return (cast(fun_t)objc_msgSend)(getClassID(), sel!"timeIntervalSinceReferenceDate");
+        else
+            static assert(false);
     }
 }
 

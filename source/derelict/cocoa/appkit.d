@@ -69,54 +69,64 @@ struct NSApplication
 
     public static NSApplication sharedApplication ()
     {
-        id result = objc_msgSend(lazyClass!"NSApplication", sel!"sharedApplication");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(lazyClass!"NSApplication", sel!"sharedApplication");
         return NSApplication(result);
     }
 
     NSMenu mainMenu ()
     {
-        id result = objc_msgSend(_id, sel!"mainMenu");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"mainMenu");
         return NSMenu(result);
     }
 
     void setAppleMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setAppleMenu:", menu._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setAppleMenu:", menu._id);
     }
 
     void setWindowsMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setWindowsMenu:", menu._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setWindowsMenu:", menu._id);
     }
 
     void setMainMenu (NSMenu menu)
     {
-        objc_msgSend(_id, sel!"setMainMenu:", menu._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setMainMenu:", menu._id);
     }
 
     void setDelegate (id object)
     {
-        objc_msgSend(_id, sel!"setDelegate:", object.id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setDelegate:", object.id);
     }
 
     void setActivationPolicy(NSApplicationActivationPolicy policy)
     {
-        objc_msgSend(_id, sel!"setActivationPolicy:", policy);
+        alias fun_t = extern(C) void function (id, SEL, NSApplicationActivationPolicy);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setActivationPolicy:", policy);
     }
 
     void activateIgnoringOtherApps(BOOL b)
     {
-        objc_msgSend(_id, sel!"activateIgnoringOtherApps:", b);
+        alias fun_t = extern(C) void function (id, SEL, BOOL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"activateIgnoringOtherApps:", b);
     }
 
     void run ()
     {
-        objc_msgSend(_id, sel!"run");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"run");
     }
 
     void stop (id sender)
     {
-        objc_msgSend(_id, sel!"stop:", sender);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"stop:", sender);
     }
 }
 
@@ -129,41 +139,48 @@ struct NSMenu
 
     NSString title ()
     {
-        id result = objc_msgSend(_id, sel!"title");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"title");
         return NSString(result);
     }
 
     NSMenu initWithTitle (NSString aTitle)
     {
-        id result = objc_msgSend(_id, sel!"initWithTitle:", aTitle._id);
+        alias fun_t = extern(C) id function (id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"initWithTitle:", aTitle._id);
         return NSMenu(result);
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(_id, sel!"setTitle:", str._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setTitle:", str._id);
     }
 
     NSArray itemArray ()
     {
-        id result = objc_msgSend(_id, sel!"itemArray");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"itemArray");
         return NSArray(result);
     }
 
     void sizeToFit ()
     {
-        objc_msgSend(_id, sel!"sizeToFit");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"sizeToFit");
     }
 
     NSMenuItem addItemWithTitle (NSString str, string selector, NSString keyEquiv)
     {
-        id result = objc_msgSend(_id, sel!"addItemWithTitle:action:keyEquivalent:", str._id, cast(SEL) selector.ptr, keyEquiv._id);
+        alias fun_t = extern(C) id function (id, SEL, id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"addItemWithTitle:action:keyEquivalent:", str._id, cast(SEL) selector.ptr, keyEquiv._id);
         return NSMenuItem(result);
     }
 
     void addItem (NSMenuItem newItem)
     {
-        objc_msgSend(_id, sel!"addItem:", newItem._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"addItem:", newItem._id);
     }
 }
 
@@ -176,47 +193,55 @@ struct NSMenuItem
 
     static NSMenuItem separatorItem ()
     {
-        id result = objc_msgSend(lazyClass!"NSMenuItem", sel!"separatorItem");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(lazyClass!"NSMenuItem", sel!"separatorItem");
         return NSMenuItem(result);
     }
 
     NSMenuItem initWithTitle (NSString itemName, string anAction, NSString charCode)
     {
-        id result = objc_msgSend(_id, sel!"initWithTitle:action:keyEquivalent:",
+        alias fun_t = extern(C) id function (id, SEL, id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"initWithTitle:action:keyEquivalent:",
                                  itemName._id, sel_registerName(anAction), charCode._id);
         return NSMenuItem(result);
     }
 
     NSString title ()
     {
-        id result = objc_msgSend(_id, sel!"title");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"title");
         return NSString(result);
     }
 
     void setTitle (NSString str)
     {
-        objc_msgSend(_id, sel!"setTitle:", str._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setTitle:", str._id);
     }
 
     bool hasSubmenu ()
     {
-        return objc_msgSend(_id, sel!"hasSubmenu") !is null;
+        alias fun_t = extern(C) BOOL function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"hasSubmenu") != NO;
     }
 
     NSMenu submenu ()
     {
-        id result = objc_msgSend(_id, sel!"submenu");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"submenu");
         return NSMenu(result);
     }
 
     void setKeyEquivalentModifierMask (NSUInteger mask)
     {
-        objc_msgSend(_id, sel!"setKeyEquivalentModifierMask:", mask);
+        alias fun_t = extern(C) void function (id, SEL, NSUInteger);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setKeyEquivalentModifierMask:", mask);
     }
 
     void setSubmenu (NSMenu submenu)
     {
-        objc_msgSend(_id, sel!"setSubmenu:", submenu._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setSubmenu:", submenu._id);
     }
 }
 
@@ -251,48 +276,57 @@ struct NSView
 
     void initWithFrame(NSRect rect)
     {
-        objc_msgSend(_id, sel!"initWithFrame:", rect);
+        alias fun_t = extern(C) void function (id, SEL, NSRect);
+        (cast(fun_t)objc_msgSend)(_id, sel!"initWithFrame:", rect);
     }
 
     void addSubview(NSView subView)
     {
-        objc_msgSend(_id, sel!"addSubview:", subView._id);
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"addSubview:", subView._id);
     }
 
     void removeFromSuperview()
     {
-        objc_msgSend(_id, sel!"removeFromSuperview");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"removeFromSuperview");
     }
 
     NSWindow window()
     {
-        id result = objc_msgSend(_id, sel!"window");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"window");
         return NSWindow(result);
     }
 
     void setNeedsDisplayInRect(NSRect rect)
     {
-        objc_msgSend(_id, sel!"setNeedsDisplayInRect:", rect);
+        alias fun_t = extern(C) void function (id, SEL, NSRect);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setNeedsDisplayInRect:", rect);
     }
 
     NSPoint convertPoint(NSPoint point, NSView view)
     {
-        return objc_msgSend_NSPointret(_id, sel!"convertPoint:fromView:", point, view._id);
+        alias fun_t = extern(C) NSPoint function (id, const(SEL), NSPoint, id);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"convertPoint:fromView:", point, view._id);
     }
 
     NSRect convertRect(NSRect rect, NSView view)
     {
-        return objc_msgSend_NSRectret(_id, sel!"frame", rect, view._id);
+        alias fun_t = extern(C) NSRect function (id, const(SEL), NSRect, id);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"frame", rect, view._id);
     }
 
-    NSRect frame(NSPoint point, NSView view)
+    NSRect frame()
     {
-        return objc_msgSend_NSRectret(_id, sel!"frame");
+        alias fun_t = extern(C) NSRect function (id, const(SEL));
+        return (cast(fun_t)objc_msgSend)(_id, sel!"frame");
     }
 
-    NSRect bounds(NSPoint point, NSView view)
+    NSRect bounds()
     {
-        return objc_msgSend_NSRectret(_id, sel!"bounds");
+        alias fun_t = extern(C) NSRect function (id, const(SEL));
+        return (cast(fun_t)objc_msgSend)(_id, sel!"bounds");
     }
 }
 
@@ -326,45 +360,53 @@ struct NSWindow
 
     void initWithContentRect(NSRect contentRect)
     {
-        objc_msgSend(_id, sel!"initWithContentRect:", contentRect);
+        alias fun_t = extern(C) void function (id, SEL, NSRect);
+        (cast(fun_t)objc_msgSend)(_id, sel!"initWithContentRect:", contentRect);
     }
 
     void initWithContentRect(NSRect contentRect, NSUInteger windowStyle, NSBackingStoreType bufferingType, BOOL deferCreation)
     {
-        objc_msgSend(_id, sel!"initWithContentRect:styleMask:backing:defer:", contentRect, windowStyle, bufferingType, deferCreation);
+        alias fun_t = extern(C) void function (id, SEL, NSRect, NSUInteger, NSBackingStoreType, BOOL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"initWithContentRect:styleMask:backing:defer:", contentRect, windowStyle, bufferingType, deferCreation);
     }
 
     NSView contentView()
     {
-        id result = objc_msgSend(_id, sel!"contentView");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"contentView");
         return NSView(result);
     }
 
     void makeKeyAndOrderFront()
     {
-        objc_msgSend(_id, sel!"makeKeyAndOrderFront:");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"makeKeyAndOrderFront:");
     }
 
     bool makeFirstResponder(NSResponder responder)
     {
-        BOOL result = cast(BOOL) objc_msgSend(_id, sel!"makeFirstResponder:", responder._id);
+        alias fun_t = extern(C) BOOL function (id, SEL, id);
+        BOOL result = (cast(fun_t)objc_msgSend)(_id, sel!"makeFirstResponder:", responder._id);
         return result != NO;
     }
 
     NSEvent nextEventMatchingMask(NSUInteger eventMask)
     {
-        id result = objc_msgSend(_id, sel!"nextEventMatchingMask:", eventMask);
+        alias fun_t = extern(C) id function (id, SEL, NSUInteger);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"nextEventMatchingMask:", eventMask);
         return NSEvent(result);
     }
 
     NSPoint mouseLocationOutsideOfEventStream()
     {
-        return objc_msgSend_NSPointret(_id, sel!"mouseLocationOutsideOfEventStream");
+        alias fun_t = extern(C) NSPoint function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"mouseLocationOutsideOfEventStream");
     }
 
     void setAcceptsMouseMovedEvents(bool b)
     {
-        objc_msgSend(_id, sel!"setAcceptsMouseMovedEvents:", b ? YES : NO);
+        alias fun_t = extern(C) void function (id, SEL, BOOL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"setAcceptsMouseMovedEvents:", b ? YES : NO);
     }
 }
 
@@ -595,64 +637,77 @@ struct NSEvent
 
     NSWindow window()
     {
-        id result = objc_msgSend(_id, sel!"window");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"window");
         return NSWindow(result);
     }
 
     NSEventType type()
     {
-        id result = objc_msgSend(_id, sel!"type");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"type");
         return cast(NSEventType)result;
     }
 
     int clickCount()
     {
-        return objc_msgSend_intret(_id, sel!"clickCount");
+        alias fun_t = extern(C) NSInteger function (id, SEL);
+        return cast(int)( (cast(fun_t)objc_msgSend)(_id, sel!"clickCount") );
     }
 
     int buttonNumber()
     {
-        return objc_msgSend_intret(_id, sel!"buttonNumber");
+        alias fun_t = extern(C) NSInteger function (id, SEL);
+        return cast(int)( (cast(fun_t)objc_msgSend)(_id, sel!"buttonNumber") );
     }
 
     uint pressedMouseButtons()
     {
-        return objc_msgSend_uintret(_id, sel!"pressedMouseButtons");
+        alias fun_t = extern(C) NSUInteger function (id, SEL);
+        return cast(uint)( (cast(fun_t)objc_msgSend)(getClassID(), sel!"pressedMouseButtons") );
     }
 
     NSPoint mouseLocation()
     {
-        return objc_msgSend_NSPointret(_id, sel!"mouseLocation");
+        alias fun_t = extern(C) NSPoint function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(getClassID(), sel!"mouseLocation");
     }
 
     double deltaX()
     {
-        return objc_msgSend_fpret(_id, sel!"deltaX");
+        alias fun_t = extern(C) double function (id, SEL);
+        version(X86)
+            return (cast(fun_t)objc_msgSend_fpret)(_id, sel!"deltaX");
+        else version(X86_64)
+            return (cast(fun_t)objc_msgSend)(_id, sel!"deltaX");
+        else
+            static assert(false);
     }
 
     double deltaY()
     {
-
-        return objc_msgSend_fpret(_id, sel!"deltaY");
+        alias fun_t = extern(C) double function (id, SEL);
+        version(X86)
+            return (cast(fun_t)objc_msgSend_fpret)(_id, sel!"deltaY");
+        else version(X86_64)
+            return (cast(fun_t)objc_msgSend)(_id, sel!"deltaY");
+        else
+            static assert(false);
     }
 
-    uint keyCode()
+    ushort keyCode()
     {
-        return objc_msgSend_uintret(_id, sel!"keyCode");
+        alias fun_t = extern(C) ushort function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"keyCode");
     }
-
-    extern (C) nothrow @nogc
-        {
-            alias NSPoint function (id rec, const(SEL) sel) pf_locationInWindow;
-        }
 
     NSPoint locationInWindow()
     {
-        //SEL sel = sel!"locationInWindow";
-        //return ( cast(pf_locationInWindow)(varobjc_msgSend) )(_id, sel);
-
-        //locationInWindow
-        return objc_msgSend_NSPointret(_id, sel!"locationInWindow");
+        // TODO: doesn't work width LDC in 32-bit
+        alias fun_t = extern(C) NSPoint function (id, SEL);
+        fun_t fun = cast(fun_t)objc_msgSend;
+        SEL sel = sel!"locationInWindow";
+        return fun(_id, sel);
     }
 }
 
@@ -665,28 +720,33 @@ struct NSGraphicsContext
 
     static NSGraphicsContext currentContext()
     {
-        id result = objc_msgSend(getClassID(), sel!"currentContext");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"currentContext");
         return NSGraphicsContext(result);
     }
 
     void saveGraphicsState()
     {
-        objc_msgSend(_id, sel!"saveGraphicsState");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"saveGraphicsState");
     }
 
     void restoreGraphicsState()
     {
-        objc_msgSend(_id, sel!"restoreGraphicsState");
+        alias fun_t = extern(C) void function (id, SEL);
+        (cast(fun_t)objc_msgSend)(_id, sel!"restoreGraphicsState");
     }
 
     bool flipped()
     {
-        return cast(bool) objc_msgSend(_id, sel!"flipped");
+        alias fun_t = extern(C) BOOL function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"flipped") != NO;
     }
 
     CIContext getCIContext()
     {
-        id result = objc_msgSend(_id, sel!"CIContext");
+        alias fun_t = extern(C) id function (id, SEL);
+        id result = (cast(fun_t)objc_msgSend)(_id, sel!"CIContext");
         return CIContext(result);
     }
 }
@@ -700,12 +760,14 @@ struct NSColorSpace
 
     static NSColorSpace sRGBColorSpace()
     {
-        return NSColorSpace(objc_msgSend(getClassID(), sel!"sRGBColorSpace"));
+        alias fun_t = extern(C) id function (id, SEL);
+        return NSColorSpace( (cast(fun_t)objc_msgSend)(getClassID(), sel!"sRGBColorSpace") );
     }
 
     // Should the NSColorSpace outlive the returned reference? Documentation says nothing.
     CGColorSpaceRef CGColorSpace()
     {
-        return cast(CGColorSpaceRef) objc_msgSend(_id, sel!"CGColorSpace");
+        alias fun_t = extern(C) CGColorSpaceRef function (id, SEL);
+        return (cast(fun_t)objc_msgSend)(_id, sel!"CGColorSpace");
     }
 }

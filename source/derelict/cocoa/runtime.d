@@ -37,6 +37,7 @@ module derelict.cocoa.runtime;
 
 version(OSX):
 
+import core.stdc.config;
 import std.string;
 
 import derelict.util.loader;
@@ -48,9 +49,9 @@ alias NSInteger = ptrdiff_t;
 alias NSUInteger = size_t;
 
 static if ((void*).sizeof > int.sizeof) // 64bit
-alias CGFloat = double;
+    alias CGFloat = double;
 else
-alias CGFloat = float;
+    alias CGFloat = float;
 
 struct NSPoint
 {
@@ -117,9 +118,9 @@ struct objc_class
     Class isa;
     Class super_class;
     const char* name;
-    int versionn;
-    int info;
-    int instance_size;
+    c_long versionn;
+    c_long info;
+    c_long instance_size;
     objc_ivar_list* ivars;
     objc_method_list** methodLists;
     objc_cache* cache;
@@ -191,17 +192,17 @@ extern (C) nothrow @nogc
     alias Class function (Class superclass, const(char)* name, size_t extraBytes) pfobjc_allocateClassPair;
     alias id function (const(char)* name) pfobjc_getClass;
     alias id function (const(char)* name) pfobjc_lookUpClass;
-    alias id function (id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend;
-    alias id function (objc_super* superr, const(SEL) op, ...) pfobjc_msgSendSuper;
-    alias void function (void* stretAddr, id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend_stret;
+
+    alias id function (id theReceiver, SEL theSelector, ...) pfobjc_msgSend;
+    alias id function (objc_super* superr, SEL op, ...) pfobjc_msgSendSuper;
+    alias void function (void* stretAddr, id theReceiver, SEL theSelector, ...) pfobjc_msgSend_stret;
+
     alias const(char)* function (id obj) pfobject_getClassName;
     alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
     alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
     alias SEL function (const(char)* str) pfsel_registerName;
  //   version (X86)
         alias double function (id self, SEL op, ...) pfobjc_msgSend_fpret;
-
-    alias double function (id self, SEL op, ...) pfobjc_msgSend_fp2ret;
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
     alias IMP function (Method method, IMP imp) pfmethod_setImplementation;
@@ -220,18 +221,17 @@ __gshared
     pfobjc_allocateClassPair varobjc_allocateClassPair;
     pfobjc_getClass varobjc_getClass;
     pfobjc_lookUpClass varobjc_lookUpClass;
-    pfobjc_msgSend varobjc_msgSend;
-    pfobjc_msgSendSuper varobjc_msgSendSuper;
-    pfobjc_msgSend_stret varobjc_msgSend_stret;
+
+    pfobjc_msgSend objc_msgSend;
+    pfobjc_msgSendSuper objc_msgSendSuper;
+    pfobjc_msgSend_stret objc_msgSend_stret;
+    pfobjc_msgSend_fpret objc_msgSend_fpret;
+
     pfobject_getClassName varobject_getClassName;
     pfobject_getInstanceVariable varobject_getInstanceVariable;
     pfobject_setInstanceVariable varobject_setInstanceVariable;
     pfsel_registerName varsel_registerName;
 
-  //  version (X86)
-        pfobjc_msgSend_fpret varobjc_msgSend_fpret;
-
-    pfobjc_msgSend_fp2ret varobjc_msgSend_fp2ret;
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
     pfmethod_setImplementation method_setImplementation;
@@ -288,21 +288,8 @@ SEL sel_registerName (string str)
     return varsel_registerName(str.ptr);
 }
 
-id objc_msgSend (ARGS...)(id theReceiver, SEL theSelector, ARGS args)
-{
-    return varobjc_msgSend(theReceiver, theSelector, args);
-}
 
-void objc_msgSend_stret (T, ARGS...)(T* stretAddr, id theReceiver, SEL theSelector, ARGS args)
-{
-    varobjc_msgSend_stret(stretAddr, theReceiver, theSelector, args);
-}
-
-id objc_msgSendSuper (ARGS...)(objc_super* superr, SEL theSelector, ARGS args)
-{
-    return varobjc_msgSendSuper(superr, theSelector, args);
-}
-
+/*
 // Added for convenience
 int objc_msgSend_intret(ARGS...)(id theReceiver, SEL theSelector, ARGS args)
 {
@@ -328,25 +315,7 @@ NSPoint objc_msgSend_NSPointret(ARGS...)(id theReceiver, SEL theSelector, ARGS a
     auto fun = cast(pfobjc_msgSend_NSPointret)varobjc_msgSend;
     return fun(theReceiver, theSelector, args);
 }
-
-
-version (X86)
-{
-    double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
-    {
-        return varobjc_msgSend_fpret(self, theSelector, args);
-    }
-}
-else
-{
-    double objc_msgSend_fpret(ARGS...)(id self, SEL theSelector, ARGS args)
-    {
-        // Strange, it isn't supposed to be work with varobjc_msgSend_fpret.
-        // This really shouldn't work, I don't understand.
-        double result = varobjc_msgSend_fpret(self, theSelector, args);
-        return result;
-    }
-}
+*/
 
 Method class_getInstanceMethod (Class aClass, string aSelector)
 {

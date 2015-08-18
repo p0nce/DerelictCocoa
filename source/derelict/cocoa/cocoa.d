@@ -65,22 +65,25 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&varobjc_allocateClassPair, "objc_allocateClassPair");
             bindFunc(cast(void**)&varobjc_getClass, "objc_getClass");
             bindFunc(cast(void**)&varobjc_lookUpClass, "objc_lookUpClass");
-            bindFunc(cast(void**)&varobjc_msgSend, "objc_msgSend");
-            bindFunc(cast(void**)&varobjc_msgSendSuper, "objc_msgSendSuper");
-            bindFunc(cast(void**)&varobjc_msgSend_stret, "objc_msgSend_stret");
+
+            bindFunc(cast(void**)&objc_msgSend, "objc_msgSend");
+            bindFunc(cast(void**)&objc_msgSendSuper, "objc_msgSendSuper");
+            bindFunc(cast(void**)&objc_msgSend_stret, "objc_msgSend_stret");
+            version(X86) bindFunc(cast(void**)&objc_msgSend_fpret, "objc_msgSend_fpret");
+
             bindFunc(cast(void**)&varobject_getClassName, "object_getClassName");
             bindFunc(cast(void**)&varobject_getInstanceVariable, "object_getInstanceVariable");
             bindFunc(cast(void**)&varobject_setInstanceVariable, "object_setInstanceVariable");
             bindFunc(cast(void**)&varsel_registerName, "sel_registerName");
-          /*  version(X86)*/ bindFunc(cast(void**)&varobjc_msgSend_fpret, "objc_msgSend_fpret");
+
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
 
-            // Foundation            
+            // Foundation
             bindFunc(cast(void**)&NSLog, "NSLog");
             bindFunc(cast(void**)&NSAllocateMemoryPages, "NSAllocateMemoryPages");
             bindFunc(cast(void**)&NSDeallocateMemoryPages, "NSDeallocateMemoryPages");
-            
+
             // TODO: load from proper global variables
             NSDefaultRunLoopMode = NSString.stringWith("kCFRunLoopDefaultMode");
             NSRunLoopCommonModes = NSString.stringWith("kCFRunLoopCommonModes");
@@ -108,6 +111,6 @@ shared static this()
 
 unittest
 {
-    static if(Derelict_OS_Mac)   
+    static if(Derelict_OS_Mac)
         DerelictCocoa.load();
 }
