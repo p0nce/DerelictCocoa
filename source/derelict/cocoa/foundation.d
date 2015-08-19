@@ -219,7 +219,7 @@ struct NSURL
     NSObject parent;
     alias parent this;
 
-    mixin NSObjectTemplate!(NSEnumerator, "NSEnumerator");
+    mixin NSObjectTemplate!(NSURL, "NSURL");
 
     static NSURL URLWithString(NSString str)
     {
