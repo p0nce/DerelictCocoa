@@ -16,8 +16,10 @@ void main(string[] args)
 
     NSApp.setActivationPolicy(NSApplicationActivationPolicyRegular);
 
-    NSMenu menubar = new NSMenu;
-    NSMenuItem appMenuItem = new NSMenuItem;
+    NSMenu menubar = NSMenu.alloc;
+    menubar.init_();
+    NSMenuItem appMenuItem = NSMenuItem.alloc();
+    appMenuItem.init_();
     menubar.addItem(appMenuItem);
     NSApp.setMainMenu(menubar);
 

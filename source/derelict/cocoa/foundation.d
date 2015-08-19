@@ -112,7 +112,7 @@ struct NSObject
     {
     }
 
-    NSObject init()
+    NSObject init_()
     {
         alias fun_t = extern(C) id function (id, const(SEL));
         id result = (cast(fun_t)objc_msgSend)(_id, sel!"init");
@@ -212,6 +212,22 @@ struct NSString
         id result = (cast(fun_t)objc_msgSend)(_id, sel!"stringByAppendingString:", aString._id);
         return NSString(result);
     }
+}
+
+struct NSURL
+{
+    NSObject parent;
+    alias parent this;
+
+    mixin NSObjectTemplate!(NSEnumerator, "NSEnumerator");
+
+    static NSURL URLWithString(NSString str)
+    {
+        alias fun_t = extern(C) id function(id, SEL, id);
+        id result = (cast(fun_t)objc_msgSend)(getClassID(), sel!"URLWithString:", str._id);
+        return NSURL(result);
+    }
+
 }
 
 struct NSEnumerator
