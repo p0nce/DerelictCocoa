@@ -190,6 +190,7 @@ extern (C) nothrow @nogc
     alias bool function (Class cls, const(char)* name, size_t size, byte alignment, const(char)* types) pfclass_addIvar;
     alias bool function (Class cls, const(SEL) name, IMP imp, const(char)* types) pfclass_addMethod;
     alias Class function (Class superclass, const(char)* name, size_t extraBytes) pfobjc_allocateClassPair;
+    alias void function(Class cls) pfobjc_disposeClassPair;
     alias id function (const(char)* name) pfobjc_getClass;
     alias id function (const(char)* name) pfobjc_lookUpClass;
 
@@ -219,6 +220,7 @@ __gshared
     pfclass_addIvar varclass_addIvar;
     pfclass_addMethod varclass_addMethod;
     pfobjc_allocateClassPair varobjc_allocateClassPair;
+    pfobjc_disposeClassPair objc_disposeClassPair;
     pfobjc_getClass varobjc_getClass;
     pfobjc_lookUpClass varobjc_lookUpClass;
 

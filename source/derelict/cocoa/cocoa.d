@@ -63,6 +63,7 @@ class DerelictCocoaLoader : SharedLibLoader
             bindFunc(cast(void**)&varclass_addIvar, "class_addIvar");
             bindFunc(cast(void**)&varclass_addMethod, "class_addMethod");
             bindFunc(cast(void**)&varobjc_allocateClassPair, "objc_allocateClassPair");
+            bindFunc(cast(void**)&objc_disposeClassPair, "objc_disposeClassPair");
             bindFunc(cast(void**)&varobjc_getClass, "objc_getClass");
             bindFunc(cast(void**)&varobjc_lookUpClass, "objc_lookUpClass");
 
