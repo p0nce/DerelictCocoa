@@ -295,32 +295,47 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
     return varclass_getInstanceMethod(aClass, aSelector.ptr);
 }
 
+
+// Only LDC supports TLS for Mac in shared libraries.
+version(LDC)
+    version = useTLSVariables;
+
+
 // Lazy selector literal
 // eg: sel!"init"
-// Not thread-safe!
 SEL sel(string selectorName)()
 {
-    static SEL cached = null; // cached is TLS
-
-    if (cached is null)
+    version(useTLSVariables)
     {
-        cached = sel_registerName(selectorName);
+        static SEL cached = null; // cached is TLS
+
+        if (cached is null) // Not thread-safe! TODO
+        {
+            cached = sel_registerName(selectorName);
+        }
+        return cached;
     }
-    return cached;
+    else
+        return sel_registerName(selectorName);
+
 }
 
 // Lazy class object
 // eg: lazyClass!"NSObject"
-// Not thread-safe!
 id lazyClass(string className)()
 {
-    static id cached = null; // cached is TLS
-
-    if (cached is null)
+    version(useTLSVariables)
     {
-        cached = objc_getClass(className);
+        static id cached = null; // cached is TLS
+
+        if (cached is null) // Not thread-safe! TODO
+        {
+            cached = objc_getClass(className);
+        }
+        return cached;
     }
-    return cached;
+    else
+        return objc_getClass(className);
 }
 
 // @encode replacement
