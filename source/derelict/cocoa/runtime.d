@@ -309,7 +309,7 @@ SEL sel(string selectorName)()
     {
         static SEL cached = null; // cached is TLS
 
-        if (cached is null) // Not thread-safe! TODO
+        if (cached is null)
         {
             cached = sel_registerName(selectorName);
         }
