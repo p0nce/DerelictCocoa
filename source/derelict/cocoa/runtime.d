@@ -316,7 +316,10 @@ SEL sel(string selectorName)()
         return cached;
     }
     else
+    {
+        // TODO: could be done with caching, shared variables and atomics only
         return sel_registerName(selectorName);
+    }
 
 }
 
