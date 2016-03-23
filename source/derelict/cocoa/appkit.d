@@ -778,3 +778,47 @@ struct NSColorSpace
         return (cast(fun_t)objc_msgSend)(_id, sel!"CGColorSpace");
     }
 }
+
+struct NSCursor
+{
+    NSObject parent;
+    alias parent this;
+
+    mixin NSObjectTemplate!(NSCursor, "NSCursor");
+
+    static NSCursor arrowCursor()
+    {
+        alias fun_t = extern(C) id function (id, SEL);
+        return NSCursor( (cast(fun_t)objc_msgSend)(getClassID(), sel!"arrowCursor") );
+    }
+
+    static void hide()
+    {
+        alias fun_t = extern(C) id function (id, SEL);
+        (cast(fun_t)objc_msgSend)(getClassID(), sel!"hide");
+    }
+
+    static void unhide()
+    {
+        alias fun_t = extern(C) id function (id, SEL);
+        (cast(fun_t)objc_msgSend)(getClassID(), sel!"unhide");
+    }
+
+    static void pop()
+    {
+        alias fun_t = extern(C) id function (id, SEL);
+        (cast(fun_t)objc_msgSend)(getClassID(), sel!"pop");
+    }
+
+    void push()
+    {
+        alias fun_t = extern(C) void function (id, SEL);
+        objc_msgSend(_id, sel!"push");
+    }
+
+    void set()
+    {
+        alias fun_t = extern(C) void function (id, SEL);
+        objc_msgSend(_id, sel!"set");
+    }
+}
