@@ -73,12 +73,20 @@ class DerelictCocoaLoader : SharedLibLoader
             version(X86) bindFunc(cast(void**)&objc_msgSend_fpret, "objc_msgSend_fpret");
 
             bindFunc(cast(void**)&varobject_getClassName, "object_getClassName");
-            bindFunc(cast(void**)&varobject_getInstanceVariable, "object_getInstanceVariable");
-            bindFunc(cast(void**)&varobject_setInstanceVariable, "object_setInstanceVariable");
+            bindFunc(cast(void**)&object_getInstanceVariable, "object_getInstanceVariable");
+            bindFunc(cast(void**)&object_setInstanceVariable, "object_setInstanceVariable");
             bindFunc(cast(void**)&varsel_registerName, "sel_registerName");
 
             bindFunc(cast(void**)&varclass_getInstanceMethod, "class_getInstanceMethod");
             bindFunc(cast(void**)&method_setImplementation, "method_setImplementation");
+
+
+            bindFunc(cast(void**)&class_addProtocol, "class_addProtocol");
+            bindFunc(cast(void**)&objc_getProtocol, "objc_getProtocol");
+            bindFunc(cast(void**)&objc_allocateProtocol, "objc_allocateProtocol"); // min 10.7
+            bindFunc(cast(void**)&objc_registerProtocol, "objc_registerProtocol"); // min 10.7
+            bindFunc(cast(void**)&class_conformsToProtocol, "class_conformsToProtocol"); // min 10.5
+            bindFunc(cast(void**)&protocol_addMethodDescription, "protocol_addMethodDescription"); // min 10.7
 
             // Foundation
             bindFunc(cast(void**)&NSLog, "NSLog");

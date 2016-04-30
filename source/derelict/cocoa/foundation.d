@@ -70,7 +70,7 @@ alias NSTimeInterval = double;
 mixin template NSObjectTemplate(T, string className)
 {
     // create from an id
-    this (id id_)
+    this (id id_) nothrow @nogc
     {
         this._id = id_;
     }
@@ -82,12 +82,12 @@ mixin template NSObjectTemplate(T, string className)
         return T( (cast(fun_t)objc_msgSend)(getClassID(), sel!"alloc") );
     }
 
-    static Class getClass()
+    static Class getClass() nothrow
     {
         return cast(Class)( lazyClass!className() );
     }
 
-    static id getClassID()
+    static id getClassID() nothrow
     {
         return lazyClass!className();
     }

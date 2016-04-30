@@ -202,7 +202,7 @@ extern (C) nothrow @nogc
     alias Ivar function (id obj, const(char)* name, void** outValue) pfobject_getInstanceVariable;
     alias Ivar function (id obj, const(char)* name, void* value) pfobject_setInstanceVariable;
     alias SEL function (const(char)* str) pfsel_registerName;
- //   version (X86)
+    version (X86)
         alias double function (id self, SEL op, ...) pfobjc_msgSend_fpret;
 
     alias Method function (Class aClass, const(SEL) aSelector) pfclass_getInstanceMethod;
@@ -211,6 +211,15 @@ extern (C) nothrow @nogc
 
     // like pfobjc_msgSend except for returning NSPoint
     alias NSPoint function (id theReceiver, const(SEL) theSelector, ...) pfobjc_msgSend_NSPointret;
+
+
+    alias pfobjc_getProtocol = Protocol* function (const(char)* name);
+    alias pfclass_addProtocol = BOOL function (Class cls, Protocol* protocol);
+    alias pfobjc_allocateProtocol = Protocol* function(const(char)* name);
+    alias pfobjc_registerProtocol = void function(Protocol *proto);
+    alias pfclass_conformsToProtocol = BOOL function(Class cls, Protocol *protocol);
+
+    alias pfprotocol_addMethodDescription = void function(Protocol *proto, SEL name, const char *types, BOOL isRequiredMethod, BOOL isInstanceMethod);
 }
 
 __gshared
@@ -227,26 +236,34 @@ __gshared
     pfobjc_msgSend objc_msgSend;
     pfobjc_msgSendSuper objc_msgSendSuper;
     pfobjc_msgSend_stret objc_msgSend_stret;
-    pfobjc_msgSend_fpret objc_msgSend_fpret;
+
+    version(X86)
+        pfobjc_msgSend_fpret objc_msgSend_fpret;
 
     pfobject_getClassName varobject_getClassName;
-    pfobject_getInstanceVariable varobject_getInstanceVariable;
-    pfobject_setInstanceVariable varobject_setInstanceVariable;
+    pfobject_getInstanceVariable object_getInstanceVariable;
+    pfobject_setInstanceVariable object_setInstanceVariable;
     pfsel_registerName varsel_registerName;
-
 
     pfclass_getInstanceMethod varclass_getInstanceMethod;
     pfmethod_setImplementation method_setImplementation;
+
+    pfobjc_getProtocol objc_getProtocol;
+    pfclass_addProtocol class_addProtocol;
+    pfobjc_allocateProtocol objc_allocateProtocol;
+    pfobjc_registerProtocol objc_registerProtocol;
+    pfclass_conformsToProtocol class_conformsToProtocol;
+    pfprotocol_addMethodDescription protocol_addMethodDescription;
 }
 
 bool class_addIvar (Class cls, string name, size_t size, byte alignment, string types)
 {
-    return varclass_addIvar(cls, name.ptr, size, alignment, types.ptr);
+    return varclass_addIvar(cls, toStringz(name), size, alignment, toStringz(types));
 }
 
 bool class_addMethod (Class cls, SEL name, IMP imp, string types)
 {
-    return varclass_addMethod(cls, name, imp, types.ptr);
+    return varclass_addMethod(cls, name, imp, toStringz(types));
 }
 
 Class objc_allocateClassPair (Class superclass, const(char)* name, size_t extraBytes)
@@ -254,20 +271,14 @@ Class objc_allocateClassPair (Class superclass, const(char)* name, size_t extraB
     return varobjc_allocateClassPair(superclass, name, extraBytes);
 }
 
-id objc_getClass (string name)
+id objc_getClass (string name) nothrow
 {
-    import std.stdio;
-    id result = varobjc_getClass(toStringz(name));
-
-    if (result is null)
-        throw new Exception("objc_getClass failed with class " ~ name);
-
-    return result;
+    return varobjc_getClass(toStringz(name));
 }
 
-id objc_lookUpClass (string name)
+id objc_lookUpClass (string name) nothrow
 {
-    return varobjc_lookUpClass(name.ptr);
+    return varobjc_lookUpClass(toStringz(name));
 }
 
 string object_getClassName (id obj)
@@ -275,24 +286,14 @@ string object_getClassName (id obj)
     return fromStringz(varobject_getClassName(obj)).idup;
 }
 
-Ivar object_getInstanceVariable (id obj, string name, void** outValue)
+SEL sel_registerName (string str) nothrow
 {
-    return varobject_getInstanceVariable(obj, name.ptr, outValue);
-}
-
-Ivar object_setInstanceVariable (id obj, string name, void* value)
-{
-    return varobject_setInstanceVariable(obj, name.ptr, value);
-}
-
-SEL sel_registerName (string str)
-{
-    return varsel_registerName(str.ptr);
+    return varsel_registerName(toStringz(str));
 }
 
 Method class_getInstanceMethod (Class aClass, string aSelector)
 {
-    return varclass_getInstanceMethod(aClass, aSelector.ptr);
+    return varclass_getInstanceMethod(aClass, toStringz(aSelector));
 }
 
 
@@ -303,7 +304,7 @@ version(LDC)
 
 // Lazy selector literal
 // eg: sel!"init"
-SEL sel(string selectorName)()
+SEL sel(string selectorName)() nothrow
 {
     version(useTLSVariables)
     {
@@ -325,7 +326,7 @@ SEL sel(string selectorName)()
 
 // Lazy class object
 // eg: lazyClass!"NSObject"
-id lazyClass(string className)()
+id lazyClass(string className)() nothrow
 {
     version(useTLSVariables)
     {
@@ -341,6 +342,22 @@ id lazyClass(string className)()
         return objc_getClass(className);
 }
 
+Protocol* lazyProtocol(string className)() nothrow @nogc
+{
+    version(useTLSVariables)
+    {
+        static id cached = null; // cached is TLS
+
+        if (cached is null) // Not thread-safe! TODO
+        {
+            cached = objc_getProtocol(className);
+        }
+        return cached;
+    }
+    else
+        return objc_getProtocol(className);
+}
+
 // @encode replacement
 template encode(T)
 {
@@ -350,4 +367,10 @@ template encode(T)
     {
         enum encode = "{_NSRect={_NSPoint=dd}{_NSSize=dd}}";
     }
+    else static if (is(T == NSSize))
+    {
+        enum encode = "{_NSSize=dd}";
+    }
+    else
+        static assert(false, "TODO implement encode for type " ~ T.stringof);
 }
