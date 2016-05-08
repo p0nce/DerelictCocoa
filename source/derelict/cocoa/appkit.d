@@ -261,11 +261,24 @@ struct NSResponder
 alias NSBorderType = NSUInteger;
 enum : NSBorderType
 {
-   NSNoBorder     = 0,
-   NSLineBorder   = 1,
-   NSBezelBorder  = 2,
-   NSGrooveBorder = 3
+    NSNoBorder     = 0,
+    NSLineBorder   = 1,
+    NSBezelBorder  = 2,
+    NSGrooveBorder = 3
 }
+
+alias NSAutoresizingMaskOptions = NSUInteger;
+enum : NSAutoresizingMaskOptions
+{
+    NSViewNotSizable     = 0,
+    NSViewMinXMargin     = 1,
+    NSViewWidthSizable   = 2,
+    NSViewMaxXMargin     = 4,
+    NSViewMinYMargin     = 8,
+    NSViewHeightSizable  = 16,
+    NSViewMaxYMargin     = 32
+}
+
 
 struct NSView
 {

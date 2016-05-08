@@ -127,6 +127,8 @@ struct objc_class
     objc_protocol_list* protocols;
 }
 
+alias objc_property_t = void*;
+
 struct objc_ivar
 {
     char* ivar_name;
