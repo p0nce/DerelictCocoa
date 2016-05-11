@@ -1,7 +1,7 @@
 DerelictCocoa [![Build Status](https://travis-ci.org/p0nce/DerelictCocoa.png?branch=master)](https://travis-ci.org/p0nce/DerelictCocoa)
 =============
 
-*Warning: this a VERY bare-bones unofficial Derelict binding.*
+*Warning: this an unofficial Derelict binding.*
 
 A dynamic binding to [Cocoa](https://en.wikipedia.org/wiki/Cocoa_(API)) for the D Programming Language. **This binding is incomplete. Use PR to add more stuff.**
 

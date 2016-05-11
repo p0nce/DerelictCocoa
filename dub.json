@@ -1,6 +1,6 @@
 {
     "name": "derelict-cocoa",
-    "description": "A dynamic binding to the Apple Cocoa framework.",
+    "description": "A dynamic binding to AppKit, CoreGraphics, CoreImage, and Foundation frameworks.",
     "homepage": "https://github.com/p0nce/DerelictCocoa",
     "license": "Boost",
     "authors": [
