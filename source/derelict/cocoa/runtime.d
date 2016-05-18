@@ -38,6 +38,8 @@ module derelict.cocoa.runtime;
 version(OSX):
 
 import core.stdc.config;
+import core.atomic;
+
 import std.string;
 
 import derelict.util.loader;
@@ -300,8 +302,10 @@ Method class_getInstanceMethod (Class aClass, string aSelector)
 
 
 // Only LDC supports TLS for Mac in shared libraries.
-version(LDC)
-    version = useTLSVariables;
+//version(LDC)
+//    version = useTLSVariables;
+
+version = useAtomics; // this way we avoid TLS variables
 
 
 // Lazy selector literal
@@ -317,6 +321,18 @@ SEL sel(string selectorName)() nothrow
             cached = sel_registerName(selectorName);
         }
         return cached;
+    }
+    else version(useAtomics)
+    {
+        // we use type-punning here because deep shared(T) is annoying
+        shared(size_t) cached = 0;
+        size_t got = atomicLoad(cached);
+        if (got == 0)
+        {
+            got = cast(size_t)( sel_registerName(selectorName) );
+            atomicStore(cached, got);
+        }
+        return cast(SEL) got;
     }
     else
     {
@@ -340,6 +356,18 @@ id lazyClass(string className)() nothrow
         }
         return cached;
     }
+    else version(useAtomics)
+    {
+        // we use type-punning here because deep shared(T) is annoying
+        shared(size_t) cached = 0;
+        size_t got = atomicLoad(cached);
+        if (got == 0)
+        {
+            got = cast(size_t)( objc_getClass(className) );
+            atomicStore(cached, got);
+        }
+        return cast(id) got;
+    }
     else
         return objc_getClass(className);
 }
@@ -355,6 +383,18 @@ Protocol* lazyProtocol(string className)() nothrow @nogc
             cached = objc_getProtocol(className);
         }
         return cached;
+    }
+    else version(useAtomics)
+    {
+        // we use type-punning here because deep shared(T) is annoying
+        shared(size_t) cached = 0;
+        size_t got = atomicLoad(cached);
+        if (got == 0)
+        {
+            got = cast(size_t)( objc_getProtocol(className) );
+            atomicStore(cached, got);
+        }
+        return cast(Protocol*) got;
     }
     else
         return objc_getProtocol(className);
