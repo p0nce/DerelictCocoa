@@ -128,6 +128,12 @@ struct NSApplication
         alias fun_t = extern(C) void function (id, SEL, id);
         (cast(fun_t)objc_msgSend)(_id, sel!"stop:", sender);
     }
+
+    void sendEvent(NSEvent event)
+    {
+        alias fun_t = extern(C) void function (id, SEL, id);
+        (cast(fun_t)objc_msgSend)(_id, sel!"sendEvent:", event._id);
+    }
 }
 
 struct NSMenu
