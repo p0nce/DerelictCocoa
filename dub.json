@@ -14,14 +14,6 @@
     "targetPath": "lib",
 
     "dependencies": {
-        "dplug:derelict-nogc": "~>4.0"
-    },
-
-    "subConfigurations": {
-        "dplug:derelict-nogc": "nogc"
-    },
-
-    "comment-dependencies": {
-        "derelict-util": "~>2.0"
+        "derelict-util": "~>3.0.0-beta.1"
     }
 }
